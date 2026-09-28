@@ -79,7 +79,7 @@ export const Home = () => {
                 borderRadius: '50%',
                 display: 'inline-block'
               }} />
-              Designed by Student from SMIC in-terms of Free portfolio
+              Designed by Student from SMIC
             </div>
 
             {/* Brand Logo: Main built.png */}
