@@ -19,13 +19,30 @@ export const Footer = () => {
         color: 'var(--text-secondary)'
       }}>
         <div style={{ fontWeight: 500, color: 'var(--text-primary)' }}>
-          © 2026 BUILTD. Build your digital identity. All rights reserved.
+          © 2026{' '}
+          <a
+            href="https://builtd.vercel.app"
+            style={{ color: 'inherit', textDecoration: 'none', fontWeight: 700 }}
+            onMouseEnter={(e) => e.target.style.color = 'var(--brand-orange)'}
+            onMouseLeave={(e) => e.target.style.color = 'inherit'}
+          >
+            BUILTD
+          </a>
+          . Build your digital identity. All rights reserved.
         </div>
         <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
           Open for Students
         </div>
         <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
-          BuiltD by{' '}
+          <a
+            href="https://builtd.vercel.app"
+            style={{ color: 'inherit', textDecoration: 'none', fontWeight: 600 }}
+            onMouseEnter={(e) => e.target.style.color = 'var(--brand-orange)'}
+            onMouseLeave={(e) => e.target.style.color = 'inherit'}
+          >
+            BuiltD
+          </a>{' '}
+          by{' '}
           <a 
             href="https://www.instagram.com/66manjunathreddy" 
             target="_blank" 

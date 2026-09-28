@@ -6,6 +6,19 @@ import { PortfolioProvider } from './context/PortfolioContext';
 import App from './App';
 import './styles/index.css';
 
+// Anti-copyable guard: prevent copy unless focused on input or textarea
+document.addEventListener('copy', (e) => {
+  const activeEl = document.activeElement;
+  const isInput = activeEl && (
+    activeEl.tagName === 'INPUT' || 
+    activeEl.tagName === 'TEXTAREA' || 
+    activeEl.isContentEditable
+  );
+  if (!isInput) {
+    e.preventDefault();
+  }
+});
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
