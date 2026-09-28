@@ -51,6 +51,24 @@ export const Editor = () => {
   const [location, setLocation] = useState(portfolio.profile?.location || '');
   const [profileImage, setProfileImage] = useState(portfolio.profile?.profileImage || '');
 
+  // Single button cycling states for auto-suggestions
+  const [headlineSugIndex, setHeadlineSugIndex] = useState(0);
+  const [bioSugIndex, setBioSugIndex] = useState(0);
+
+  const handleCycleHeadline = () => {
+    const current = HEADLINE_SUGGESTIONS[headlineSugIndex % HEADLINE_SUGGESTIONS.length];
+    setHeadline(current);
+    updateProfile({ headline: current });
+    setHeadlineSugIndex((prev) => (prev + 1) % HEADLINE_SUGGESTIONS.length);
+  };
+
+  const handleCycleBio = () => {
+    const current = BIO_SUGGESTIONS[bioSugIndex % BIO_SUGGESTIONS.length];
+    setBio(current);
+    updateProfile({ bio: current });
+    setBioSugIndex((prev) => (prev + 1) % BIO_SUGGESTIONS.length);
+  };
+
   // Skills
   const [selectedSkills, setSelectedSkills] = useState(portfolio.skills || []);
   const [customSkill, setCustomSkill] = useState('');
@@ -252,12 +270,7 @@ export const Editor = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                    <label className="form-label" style={{ marginBottom: 0 }}>Professional Headline</label>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--brand-orange)', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
-                      <Sparkles size={12} /> Auto-suggestions:
-                    </span>
-                  </div>
+                  <label className="form-label">Professional Headline</label>
                   <input
                     type="text"
                     className="form-input"
@@ -267,31 +280,29 @@ export const Editor = () => {
                       updateProfile({ headline: e.target.value });
                     }}
                   />
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
-                    {HEADLINE_SUGGESTIONS.map((sug, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => {
-                          setHeadline(sug);
-                          updateProfile({ headline: sug });
-                        }}
-                        className="chip"
-                        style={{ fontSize: '0.75rem', padding: '4px 10px' }}
-                      >
-                        + {sug}
-                      </button>
-                    ))}
+                  <div style={{ marginTop: '8px' }}>
+                    <button
+                      type="button"
+                      onClick={handleCycleHeadline}
+                      className="btn btn-secondary"
+                      style={{
+                        fontSize: '0.8125rem',
+                        padding: '7px 14px',
+                        borderRadius: 'var(--radius-full)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        backgroundColor: 'var(--bg-subtle)'
+                      }}
+                    >
+                      <Sparkles size={13} color="var(--brand-orange)" />
+                      <span>Auto-Suggest: <strong>"{HEADLINE_SUGGESTIONS[headlineSugIndex % HEADLINE_SUGGESTIONS.length]}"</strong> (Click to change)</span>
+                    </button>
                   </div>
                 </div>
 
                 <div className="form-group">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                    <label className="form-label" style={{ marginBottom: 0 }}>Short Bio</label>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--brand-orange)', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
-                      <Sparkles size={12} /> Click to use auto-suggested bio:
-                    </span>
-                  </div>
+                  <label className="form-label">Short Bio</label>
                   <textarea
                     className="form-input form-textarea"
                     value={bio}
@@ -301,32 +312,25 @@ export const Editor = () => {
                     }}
                     style={{ minHeight: '80px' }}
                   />
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '8px' }}>
-                    {BIO_SUGGESTIONS.map((sug, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => {
-                          setBio(sug);
-                          updateProfile({ bio: sug });
-                        }}
-                        style={{
-                          textAlign: 'left',
-                          fontSize: '0.8125rem',
-                          padding: '8px 12px',
-                          backgroundColor: 'var(--bg-main)',
-                          border: '1px solid var(--border-default)',
-                          borderRadius: 'var(--radius-sm)',
-                          color: 'var(--text-secondary)',
-                          cursor: 'pointer',
-                          lineHeight: 1.4
-                        }}
-                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--brand-orange)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-default)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
-                      >
-                        "{sug}"
-                      </button>
-                    ))}
+                  <div style={{ marginTop: '8px' }}>
+                    <button
+                      type="button"
+                      onClick={handleCycleBio}
+                      className="btn btn-secondary"
+                      style={{
+                        fontSize: '0.8125rem',
+                        padding: '8px 14px',
+                        borderRadius: 'var(--radius-full)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        backgroundColor: 'var(--bg-subtle)',
+                        textAlign: 'left'
+                      }}
+                    >
+                      <Sparkles size={13} color="var(--brand-orange)" />
+                      <span>Auto-Suggest: <strong>"{BIO_SUGGESTIONS[bioSugIndex % BIO_SUGGESTIONS.length].slice(0, 55)}..."</strong> (Click to change)</span>
+                    </button>
                   </div>
                 </div>
                 <div className="form-group">
@@ -542,21 +546,6 @@ export const Editor = () => {
                   </div>
                 </div>
 
-                <div className="form-group" style={{ marginTop: '20px' }}>
-                  <label className="form-label">Theme Mode</label>
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    {['light', 'dark'].map((thm) => (
-                      <button
-                        key={thm}
-                        onClick={() => updateSettings({ theme: thm })}
-                        className={`chip ${(portfolio.settings?.theme || 'light') === thm ? 'active' : ''}`}
-                        style={{ textTransform: 'capitalize' }}
-                      >
-                        {thm}
-                      </button>
-                    ))}
-                  </div>
-                </div>
 
                 <div className="form-group" style={{ marginTop: '20px' }}>
                   <label className="form-label">Accent Color</label>

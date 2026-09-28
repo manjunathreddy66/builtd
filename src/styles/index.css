@@ -4,18 +4,18 @@
    ========================================================================== */
 
 :root {
-  /* Brand Palette */
-  --bg-main: #F5F5F3;
+  /* Brand Palette - Clean Modern Light Theme */
+  --bg-main: #F8F9FA;
   --bg-card: #FFFFFF;
-  --bg-subtle: #EEEEEC;
-  --bg-muted: #E6E6E3;
-  --text-primary: #111111;
-  --text-secondary: #666666;
-  --text-muted: #8E8E8E;
+  --bg-subtle: #F1F3F5;
+  --bg-muted: #E9ECEF;
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --text-muted: #9CA3AF;
   --text-inverse: #FFFFFF;
-  --border-light: #E4E4E1;
-  --border-default: #DDDDDD;
-  --border-dark: #111111;
+  --border-light: #F3F4F6;
+  --border-default: #E5E7EB;
+  --border-dark: #1F2937;
   
   /* Brand Accent: BUILTD Orange */
   --brand-orange: #F25C22;
@@ -31,7 +31,8 @@
   --accent-red: #DC2626;
 
   /* Typography */
-  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-headline: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
@@ -187,10 +188,11 @@ code, pre, .mono {
 }
 
 .display-title {
-  font-size: clamp(2.5rem, 5.5vw, 4.5rem);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1.05;
+  font-family: var(--font-headline);
+  font-size: clamp(1.85rem, 3.8vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
 }
 
 .section-title {
@@ -490,8 +492,8 @@ button, a, input, select, textarea {
   }
 
   .display-title {
-    font-size: clamp(2rem, 8vw, 3rem) !important;
-    line-height: 1.1 !important;
+    font-size: clamp(1.65rem, 5.5vw, 2.2rem) !important;
+    line-height: 1.2 !important;
   }
 
   .section-title {
@@ -541,7 +543,7 @@ button, a, input, select, textarea {
   }
 
   .display-title {
-    font-size: 1.85rem !important;
+    font-size: 1.5rem !important;
   }
 
   .section-title {

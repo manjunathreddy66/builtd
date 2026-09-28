@@ -1,17 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Logo } from '../components/common/Logo';
-import { HeroScene } from '../components/three/HeroScene';
-import { 
-  ArrowRight, 
-  CheckCircle, 
-  Sparkles, 
-  Terminal, 
-  Globe, 
-  FolderGit2, 
-  GraduationCap, 
-  Cpu, 
-  Award, 
+import {
+  ArrowRight,
+  CheckCircle,
+  Sparkles,
+  Terminal,
+  Globe,
+  FolderGit2,
+  GraduationCap,
+  Cpu,
+  Award,
   ExternalLink,
   ChevronRight,
   ShieldCheck,
@@ -55,22 +54,6 @@ export const Home = () => {
         overflow: 'hidden',
         borderBottom: '1px solid var(--border-default)'
       }}>
-        {/* Subtle Three.js Background Canvas */}
-        <div 
-          className="hero-canvas-wrap"
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: '-5%',
-            width: '65%',
-            height: '100%',
-            opacity: 0.85,
-            zIndex: 0,
-            pointerEvents: 'none'
-          }}
-        >
-          <HeroScene />
-        </div>
 
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ maxWidth: '780px' }}>
@@ -96,7 +79,7 @@ export const Home = () => {
                 borderRadius: '50%',
                 display: 'inline-block'
               }} />
-              FREE FOR ALL ENGINEERING & COLLEGE STUDENTS
+              Designed by Student from SMIC in-terms of Free portfolio
             </div>
 
             {/* Brand Logo: Main built.png */}
@@ -117,20 +100,20 @@ export const Home = () => {
               marginBottom: '36px',
               maxWidth: '640px'
             }}>
-              Create your professional portfolio with just a few simple details. 
+              Create your professional portfolio with just a few simple details.
               No HTML, no CSS, no hosting headaches. BUILTD turns your achievements into a recruiter-ready personal website.
             </p>
 
             {/* Action Buttons */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center' }}>
-              <Link 
-                to="/signup" 
+              <Link
+                to="/signup"
                 className="btn btn-brand btn-lg"
               >
                 Build My Portfolio <ArrowRight size={18} />
               </Link>
-              <Link 
-                to="/explore" 
+              <Link
+                to="/explore"
                 className="btn btn-secondary btn-lg"
               >
                 Explore Portfolios
@@ -225,7 +208,7 @@ export const Home = () => {
                 No Setup or Hosting
               </h3>
               <p style={{ fontSize: '0.9375rem', color: 'var(--text-secondary)' }}>
-                Zero deployment configuration. Your public portfolio is instantly hosted and live globally on Vercel.
+                Zero deployment configuration. Your public portfolio is instantly hosted and live globally on BUILTd.
               </p>
             </div>
 
@@ -247,7 +230,7 @@ export const Home = () => {
                 Curated Design Standards
               </h3>
               <p style={{ fontSize: '0.9375rem', color: 'var(--text-secondary)' }}>
-                Designed by senior product engineers with Swiss typography, stark whitespace, and dark/light modes.
+                Designed by Student from SMIC with clean typography, generous whitespace, and responsive layouts.
               </p>
             </div>
           </div>
@@ -335,7 +318,7 @@ export const Home = () => {
             gap: '20px'
           }}>
             {onboardingSteps.map((s, idx) => (
-              <div 
+              <div
                 key={idx}
                 style={{
                   padding: '24px',
@@ -397,7 +380,7 @@ export const Home = () => {
             gap: '16px'
           }}>
             {workflowSteps.map((ws, i) => (
-              <div 
+              <div
                 key={i}
                 style={{
                   display: 'flex',
@@ -466,7 +449,7 @@ export const Home = () => {
             gap: '28px'
           }}>
             {sampleStudents.map((student) => (
-              <div 
+              <div
                 key={student.username}
                 className="card card-hover"
                 style={{
@@ -477,7 +460,7 @@ export const Home = () => {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '18px' }}>
-                  <img 
+                  <img
                     src={student.profile.profileImage}
                     alt={student.profile.name}
                     style={{

@@ -34,7 +34,7 @@ export const saveToLocalPortfolios = (username, data) => {
   }
 };
 
-// Normalize username: "Manjunath Reddy" -> "manjunath-reddy"
+// Normalize username: "Alex Morgan" -> "alex-morgan"
 export const normalizeUsername = (raw) => {
   if (!raw) return '';
   return raw
@@ -134,30 +134,45 @@ function generateSuggestions(base) {
   ].filter(s => !RESERVED_USERNAMES.includes(s)).slice(0, 3);
 }
 
-// Fetch portfolio by username
+// Synchronous fast local cache lookup for 0ms initial render
+export const getLocalPortfolioByUsername = (rawUsername) => {
+  if (!rawUsername) return null;
+  const username = normalizeUsername(rawUsername);
+  const all = getAllStoredPortfolios();
+  return all[username] || null;
+};
+
+// Fetch portfolio by username (fast instant local with quick remote revalidation)
 export const getPortfolioByUsername = async (rawUsername) => {
   const username = normalizeUsername(rawUsername);
+  const localData = getLocalPortfolioByUsername(username);
 
   if (isFirebaseConfigured && db) {
     try {
-      const usernameRef = doc(db, 'usernames', username);
-      const usernameSnap = await getDoc(usernameRef);
-      if (usernameSnap.exists()) {
-        const uid = usernameSnap.data().uid;
-        const userRef = doc(db, 'users', uid);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-          return userSnap.data();
+      const fetchPromise = (async () => {
+        const usernameRef = doc(db, 'usernames', username);
+        const usernameSnap = await getDoc(usernameRef);
+        if (usernameSnap.exists()) {
+          const uid = usernameSnap.data().uid;
+          const userRef = doc(db, 'users', uid);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            return userSnap.data();
+          }
         }
-      }
+        return null;
+      })();
+
+      // Fast timeout so users never wait on network latency
+      const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 1500));
+      const remoteData = await Promise.race([fetchPromise, timeoutPromise]);
+      if (remoteData) return remoteData;
     } catch (e) {
       console.warn('Firestore getPortfolio fallback to local:', e.message);
     }
   }
 
-  // Fallback to local store / pre-seeded data
-  const all = getAllStoredPortfolios();
-  return all[username] || null;
+  return localData;
 };
 
 // Save or publish portfolio

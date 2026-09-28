@@ -80,63 +80,17 @@ export const getThemeStyles = (settings = {}) => {
     };
   };
 
-  if (theme === 'dark') {
-    const bgPatternStyle = getPatternStyle(true);
-    return {
-      bgMain: '#0F0F10',
-      bgCard: '#18181A',
-      bgSubtle: '#222225',
-      textPrimary: '#F4F4F5',
-      textSecondary: '#A1A1AA',
-      textMuted: '#71717A',
-      borderDefault: '#27272A',
-      borderLight: '#1E1E22',
-      accent: selectedAccent.primary,
-      accentHover: selectedAccent.hover,
-      accentSubtle: selectedAccent.subtle,
-      fontFamily: selectedFont,
-      isDark: true,
-      textInversion,
-      bgPattern,
-      bgPatternStyle,
-      rootStyle: {
-        backgroundColor: '#0F0F10',
-        ...bgPatternStyle,
-        color: '#F4F4F5',
-        fontFamily: selectedFont,
-        minHeight: '100vh',
-        lineHeight: 1.6,
-        transition: 'background-color 0.2s ease, color 0.2s ease'
-      },
-      // Inverted typography styling for high-contrast presentation
-      invertedTitleStyle: textInversion ? {
-        backgroundColor: '#FFFFFF',
-        color: '#111111',
-        padding: '2px 14px',
-        display: 'inline-block',
-        borderRadius: '4px',
-        boxDecorationBreak: 'clone',
-        WebkitBoxDecorationBreak: 'clone'
-      } : {},
-      invertedBadgeStyle: textInversion ? {
-        backgroundColor: '#F4F4F5',
-        color: '#0F0F10',
-        fontWeight: 700
-      } : {}
-    };
-  }
-
-  // Light theme (Default BUILTD theme)
+  // Crisp Modern Light Theme (Black theme removed)
   const bgPatternStyle = getPatternStyle(false);
   return {
-    bgMain: '#F5F5F3',
+    bgMain: '#F8F9FA',
     bgCard: '#FFFFFF',
-    bgSubtle: '#EEEEEC',
-    textPrimary: '#111111',
-    textSecondary: '#555555',
-    textMuted: '#888888',
-    borderDefault: '#DDDDDD',
-    borderLight: '#E8E8E5',
+    bgSubtle: '#F1F3F5',
+    textPrimary: '#111827',
+    textSecondary: '#4B5563',
+    textMuted: '#9CA3AF',
+    borderDefault: '#E5E7EB',
+    borderLight: '#F3F4F6',
     accent: selectedAccent.primary,
     accentHover: selectedAccent.hover,
     accentSubtle: selectedAccent.subtle,
@@ -146,9 +100,9 @@ export const getThemeStyles = (settings = {}) => {
     bgPattern,
     bgPatternStyle,
     rootStyle: {
-      backgroundColor: '#F5F5F3',
+      backgroundColor: '#F8F9FA',
       ...bgPatternStyle,
-      color: '#111111',
+      color: '#111827',
       fontFamily: selectedFont,
       minHeight: '100vh',
       lineHeight: 1.6,
@@ -156,7 +110,7 @@ export const getThemeStyles = (settings = {}) => {
     },
     // Inverted typography styling for high-contrast presentation
     invertedTitleStyle: textInversion ? {
-      backgroundColor: '#111111',
+      backgroundColor: '#111827',
       color: '#FFFFFF',
       padding: '2px 14px',
       display: 'inline-block',
@@ -165,8 +119,8 @@ export const getThemeStyles = (settings = {}) => {
       WebkitBoxDecorationBreak: 'clone'
     } : {},
     invertedBadgeStyle: textInversion ? {
-      backgroundColor: '#111111',
-      color: '#FFFFFF',
+      backgroundColor: '#F3F4F6',
+      color: '#111827',
       fontWeight: 700
     } : {}
   };

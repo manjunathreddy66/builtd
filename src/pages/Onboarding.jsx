@@ -74,6 +74,23 @@ export const Onboarding = () => {
   const [profileImage, setProfileImage] = useState(portfolio.profile?.profileImage || '');
   const [uploadingImage, setUploadingImage] = useState(false);
 
+  // Single button cycling states for auto-suggestions
+  const [headlineSugIndex, setHeadlineSugIndex] = useState(0);
+  const [bioSugIndex, setBioSugIndex] = useState(0);
+  const [userSugIndex, setUserSugIndex] = useState(0);
+
+  const handleCycleHeadline = () => {
+    const current = HEADLINE_SUGGESTIONS[headlineSugIndex % HEADLINE_SUGGESTIONS.length];
+    setHeadline(current);
+    setHeadlineSugIndex((prev) => (prev + 1) % HEADLINE_SUGGESTIONS.length);
+  };
+
+  const handleCycleBio = () => {
+    const current = BIO_SUGGESTIONS[bioSugIndex % BIO_SUGGESTIONS.length];
+    setBio(current);
+    setBioSugIndex((prev) => (prev + 1) % BIO_SUGGESTIONS.length);
+  };
+
   // Step 2: Education
   const [educationList, setEducationList] = useState(
     portfolio.education?.length > 0 
@@ -388,7 +405,7 @@ export const Onboarding = () => {
                     id="username"
                     type="text"
                     className="form-input"
-                    placeholder="manjunath"
+                    placeholder="arjun"
                     value={usernameInput}
                     onChange={(e) => setUsernameInput(normalizeUsername(e.target.value))}
                     autoFocus
@@ -444,25 +461,27 @@ export const Onboarding = () => {
                           <X size={16} /> ✕ {availability.message}
                         </div>
                         {suggestions.length > 0 && (
-                          <div style={{ marginTop: '8px', fontSize: '0.8125rem' }}>
-                            <span style={{ color: 'var(--text-muted)' }}>Suggestions: </span>
-                            <div style={{ display: 'inline-flex', gap: '8px', marginTop: '4px' }}>
-                              {suggestions.map((s, idx) => (
-                                <button
-                                  key={idx}
-                                  type="button"
-                                  onClick={() => setUsernameInput(s)}
-                                  style={{
-                                    fontFamily: 'var(--font-mono)',
-                                    color: 'var(--brand-orange)',
-                                    textDecoration: 'underline',
-                                    fontSize: '0.8125rem'
-                                  }}
-                                >
-                                  {s}
-                                </button>
-                              ))}
-                            </div>
+                          <div style={{ marginTop: '8px' }}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const next = suggestions[userSugIndex % suggestions.length];
+                                setUsernameInput(next);
+                                setUserSugIndex((prev) => (prev + 1) % suggestions.length);
+                              }}
+                              className="btn btn-secondary"
+                              style={{ 
+                                fontSize: '0.8125rem', 
+                                padding: '6px 12px', 
+                                borderRadius: 'var(--radius-full)',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px'
+                              }}
+                            >
+                              <Sparkles size={12} color="var(--brand-orange)" />
+                              <span>Suggestion: <strong style={{ color: 'var(--brand-orange)', fontFamily: 'var(--font-mono)' }}>{suggestions[userSugIndex % suggestions.length]}</strong> (Click to change)</span>
+                            </button>
                           </div>
                         )}
                       </div>
@@ -505,7 +524,7 @@ export const Onboarding = () => {
                   id="fullName"
                   type="text"
                   className="form-input"
-                  placeholder="Manjunath Reddy"
+                  placeholder="Alex Morgan"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -528,28 +547,29 @@ export const Onboarding = () => {
                   onChange={(e) => setHeadline(e.target.value)}
                   required
                 />
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
-                  {HEADLINE_SUGGESTIONS.map((sug, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setHeadline(sug)}
-                      className="chip"
-                      style={{ fontSize: '0.75rem', padding: '4px 10px' }}
-                    >
-                      + {sug}
-                    </button>
-                  ))}
+                <div style={{ marginTop: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={handleCycleHeadline}
+                    className="btn btn-secondary"
+                    style={{
+                      fontSize: '0.8125rem',
+                      padding: '7px 14px',
+                      borderRadius: 'var(--radius-full)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      backgroundColor: 'var(--bg-subtle)'
+                    }}
+                  >
+                    <Sparkles size={13} color="var(--brand-orange)" />
+                    <span>Auto-Suggest: <strong>"{HEADLINE_SUGGESTIONS[headlineSugIndex % HEADLINE_SUGGESTIONS.length]}"</strong> (Click to change)</span>
+                  </button>
                 </div>
               </div>
 
               <div className="form-group">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                  <label className="form-label" htmlFor="bio" style={{ marginBottom: 0 }}>Short Bio</label>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--brand-orange)', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
-                    <Sparkles size={12} /> Click to use auto-suggested bio:
-                  </span>
-                </div>
+                <label className="form-label" htmlFor="bio">Short Bio</label>
                 <textarea
                   id="bio"
                   className="form-input form-textarea"
@@ -558,29 +578,25 @@ export const Onboarding = () => {
                   onChange={(e) => setBio(e.target.value)}
                   style={{ minHeight: '80px' }}
                 />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '8px' }}>
-                  {BIO_SUGGESTIONS.map((sug, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setBio(sug)}
-                      style={{
-                        textAlign: 'left',
-                        fontSize: '0.8125rem',
-                        padding: '8px 12px',
-                        backgroundColor: 'var(--bg-main)',
-                        border: '1px solid var(--border-default)',
-                        borderRadius: 'var(--radius-sm)',
-                        color: 'var(--text-secondary)',
-                        cursor: 'pointer',
-                        lineHeight: 1.4
-                      }}
-                      onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--brand-orange)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-default)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
-                    >
-                      "{sug}"
-                    </button>
-                  ))}
+                <div style={{ marginTop: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={handleCycleBio}
+                    className="btn btn-secondary"
+                    style={{
+                      fontSize: '0.8125rem',
+                      padding: '8px 14px',
+                      borderRadius: 'var(--radius-full)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      backgroundColor: 'var(--bg-subtle)',
+                      textAlign: 'left'
+                    }}
+                  >
+                    <Sparkles size={13} color="var(--brand-orange)" />
+                    <span>Auto-Suggest: <strong>"{BIO_SUGGESTIONS[bioSugIndex % BIO_SUGGESTIONS.length].slice(0, 55)}..."</strong> (Click to change)</span>
+                  </button>
                 </div>
               </div>
 
@@ -1470,22 +1486,6 @@ export const Onboarding = () => {
                 borderRadius: 'var(--radius-sm)',
                 marginBottom: '28px'
               }}>
-                <div>
-                  <span style={{ fontSize: '0.8125rem', fontWeight: 600, marginRight: '10px' }}>Theme:</span>
-                  <div style={{ display: 'inline-flex', gap: '6px' }}>
-                    {['light', 'dark'].map((thm) => (
-                      <button
-                        key={thm}
-                        type="button"
-                        onClick={() => updateSettings({ theme: thm })}
-                        className={`chip ${(portfolio.settings?.theme || 'light') === thm ? 'active' : ''}`}
-                        style={{ textTransform: 'capitalize' }}
-                      >
-                        {thm}
-                      </button>
-                    ))}
-                  </div>
-                </div>
 
                 <div>
                   <span style={{ fontSize: '0.8125rem', fontWeight: 600, marginRight: '10px' }}>Accent:</span>

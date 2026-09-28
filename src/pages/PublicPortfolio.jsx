@@ -1,24 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getPortfolioByUsername } from '../services/portfolioService';
+import { getPortfolioByUsername, getLocalPortfolioByUsername } from '../services/portfolioService';
 import { TemplateRenderer } from '../templates/TemplateRenderer';
 import { Logo } from '../components/common/Logo';
 import { ArrowLeft, AlertCircle } from 'lucide-react';
 
 export const PublicPortfolio = () => {
   const { username } = useParams();
-  const [loading, setLoading] = useState(true);
-  const [portfolioData, setPortfolioData] = useState(null);
+  const cachedData = getLocalPortfolioByUsername(username);
+  const [loading, setLoading] = useState(!cachedData);
+  const [portfolioData, setPortfolioData] = useState(cachedData);
 
   useEffect(() => {
     let isMounted = true;
 
     const loadData = async () => {
-      setLoading(true);
+      // If we don't already have cached data, show loading
+      if (!cachedData) {
+        setLoading(true);
+      }
       const data = await getPortfolioByUsername(username);
 
       if (isMounted) {
-        setPortfolioData(data);
+        if (data) {
+          setPortfolioData(data);
+        }
         setLoading(false);
 
         // SEO: Set dynamic page title & meta description

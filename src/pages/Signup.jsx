@@ -127,7 +127,7 @@ export const Signup = () => {
               id="fullName"
               type="text"
               className="form-input"
-              placeholder="Manjunath Reddy"
+              placeholder="Alex Morgan"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required

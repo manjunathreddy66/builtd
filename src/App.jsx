@@ -15,7 +15,7 @@ import NotFound from './pages/NotFound';
 export const App = () => {
   const location = useLocation();
 
-  // The public portfolio route (e.g. /manjunath) should render as a standalone personal website
+  // The public portfolio route (e.g. /arjun) should render as a standalone personal website
   // without the BUILTD platform header/footer, while platform pages show the BUILTD header/footer.
   const isPlatformRoute = [
     '/',

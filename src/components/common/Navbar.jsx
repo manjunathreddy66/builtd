@@ -51,70 +51,7 @@ export const Navbar = () => {
         </div>
 
         {/* Desktop Navigation Links */}
-        {!isAuthPage && (
-          <nav className="desktop-nav" style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '32px'
-          }}>
-            <a 
-              href="#how-it-works" 
-              className="nav-link"
-              style={{
-                fontSize: '0.9375rem',
-                fontWeight: 500,
-                color: 'var(--text-secondary)',
-                transition: 'color var(--transition-fast)'
-              }}
-              onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'}
-              onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}
-            >
-              How it works
-            </a>
-            <a 
-              href="#features" 
-              className="nav-link"
-              style={{
-                fontSize: '0.9375rem',
-                fontWeight: 500,
-                color: 'var(--text-secondary)',
-                transition: 'color var(--transition-fast)'
-              }}
-              onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'}
-              onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}
-            >
-              Features
-            </a>
-            <Link 
-              to="/explore" 
-              className="nav-link"
-              style={{
-                fontSize: '0.9375rem',
-                fontWeight: 500,
-                color: 'var(--text-secondary)',
-                transition: 'color var(--transition-fast)'
-              }}
-              onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'}
-              onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}
-            >
-              Examples
-            </Link>
-            <a 
-              href="#about" 
-              className="nav-link"
-              style={{
-                fontSize: '0.9375rem',
-                fontWeight: 500,
-                color: 'var(--text-secondary)',
-                transition: 'color var(--transition-fast)'
-              }}
-              onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'}
-              onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}
-            >
-              About
-            </a>
-          </nav>
-        )}
+
 
         {/* Right Action Buttons */}
         <div className="desktop-actions" style={{
@@ -196,36 +133,7 @@ export const Navbar = () => {
           flexDirection: 'column',
           gap: '18px'
         }}>
-          <a 
-            href="#how-it-works" 
-            onClick={() => setMobileMenuOpen(false)}
-            style={{ fontSize: '1.0625rem', fontWeight: 600 }}
-          >
-            How it works
-          </a>
-          <a 
-            href="#features" 
-            onClick={() => setMobileMenuOpen(false)}
-            style={{ fontSize: '1.0625rem', fontWeight: 600 }}
-          >
-            Features
-          </a>
-          <Link 
-            to="/explore" 
-            onClick={() => setMobileMenuOpen(false)}
-            style={{ fontSize: '1.0625rem', fontWeight: 600 }}
-          >
-            Examples
-          </Link>
-          <a 
-            href="#about" 
-            onClick={() => setMobileMenuOpen(false)}
-            style={{ fontSize: '1.0625rem', fontWeight: 600 }}
-          >
-            About
-          </a>
-          
-          <div style={{ height: '1px', backgroundColor: 'var(--border-default)', margin: '8px 0' }} />
+
 
           {currentUser ? (
             <>

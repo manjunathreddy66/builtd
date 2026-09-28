@@ -29,19 +29,19 @@ export const SUGGESTED_SKILLS = {
 };
 
 export const INITIAL_STUDENT_PORTFOLIOS = {
-  manjunath: {
-    uid: 'demo-manjunath',
-    username: 'manjunath',
+  arjun: {
+    uid: 'demo-arjun',
+    username: 'arjun',
     published: true,
     createdAt: '2026-01-15T10:00:00Z',
     updatedAt: '2026-03-20T14:30:00Z',
     profile: {
-      name: 'Manjunath Reddy',
+      name: 'Arjun Mehta',
       headline: 'Computer Science Student & Full-Stack Builder',
       bio: 'Engineering student passionate about building scalable web applications, distributed systems, and intuitive user experiences. Active open-source contributor and hackathon enthusiast.',
-      location: 'Hyderabad, India',
+      location: 'Bengaluru, India',
       profileImage: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
-      email: 'manjunath@example.com'
+      email: 'arjun@example.com'
     },
     education: [
       {
@@ -139,14 +139,14 @@ export const INITIAL_STUDENT_PORTFOLIOS = {
       }
     ],
     links: {
-      github: 'https://github.com/manjunath',
-      linkedin: 'https://linkedin.com/in/manjunath',
-      leetcode: 'https://leetcode.com/u/manjunath',
-      codeforces: 'https://codeforces.com/profile/manjunath',
+      github: 'https://github.com/arjun-dev',
+      linkedin: 'https://linkedin.com/in/arjun-mehta',
+      leetcode: 'https://leetcode.com/u/arjun-codes',
+      codeforces: 'https://codeforces.com/profile/arjun',
       whatsapp: '+91 9876543210',
-      email: 'manjunath@example.com'
+      email: 'arjun@example.com'
     },
-    resumeUrl: 'https://example.com/manjunath-resume.pdf',
+    resumeUrl: 'https://example.com/arjun-resume.pdf',
     settings: {
       template: 'editorial',
       theme: 'light',
