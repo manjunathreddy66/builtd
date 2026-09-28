@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { Navbar } from './components/common/Navbar';
 import { Footer } from './components/common/Footer';
 import Home from './pages/Home';
@@ -53,6 +54,9 @@ export const App = () => {
 
       {/* Show platform Footer on platform pages, except onboarding */}
       {isPlatformRoute && !isOnboarding && <Footer />}
+      
+      {/* Vercel Speed Insights */}
+      <SpeedInsights />
     </div>
   );
 };
