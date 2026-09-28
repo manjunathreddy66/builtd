@@ -1,8 +1,16 @@
 {
-  "name": "builtd",
+  "name": "builtd-root",
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "workspaces": [
+    "client"
+  ],
+  "allowScripts": [
+    "@firebase/util",
+    "esbuild",
+    "protobufjs"
+  ],
   "scripts": {
     "dev": "npm run dev --prefix client",
     "build": "npm run build --prefix client",
