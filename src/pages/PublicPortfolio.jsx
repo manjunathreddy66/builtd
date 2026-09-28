@@ -1,0 +1,131 @@
+import React, { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { getPortfolioByUsername } from '../services/portfolioService';
+import { TemplateRenderer } from '../templates/TemplateRenderer';
+import { Logo } from '../components/common/Logo';
+import { ArrowLeft, AlertCircle } from 'lucide-react';
+
+export const PublicPortfolio = () => {
+  const { username } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [portfolioData, setPortfolioData] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadData = async () => {
+      setLoading(true);
+      const data = await getPortfolioByUsername(username);
+
+      if (isMounted) {
+        setPortfolioData(data);
+        setLoading(false);
+
+        // SEO: Set dynamic page title & meta description
+        if (data && data.profile) {
+          const titleName = data.profile.name || username;
+          const titleHeadline = data.profile.headline ? ` — ${data.profile.headline}` : ' — BUILTD Portfolio';
+          document.title = `${titleName}${titleHeadline}`;
+
+          let metaDesc = document.querySelector('meta[name="description"]');
+          if (!metaDesc) {
+            metaDesc = document.createElement('meta');
+            metaDesc.name = 'description';
+            document.head.appendChild(metaDesc);
+          }
+          metaDesc.content = data.profile.bio || `Portfolio of ${titleName} on BUILTD.`;
+        } else {
+          document.title = 'BUILTD — Portfolio Not Found';
+        }
+      }
+    };
+
+    if (username) {
+      loadData();
+    }
+
+    return () => {
+      isMounted = false;
+      document.title = 'BUILTD — Build your digital identity.';
+    };
+  }, [username]);
+
+  if (loading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'var(--bg-main)',
+        gap: '20px'
+      }}>
+        <Logo variant="compact" height={40} withLink={false} />
+        <div style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.875rem',
+          color: 'var(--text-secondary)'
+        }}>
+          Loading portfolio...
+        </div>
+      </div>
+    );
+  }
+
+  // Not found or not published
+  if (!portfolioData) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'var(--bg-main)',
+        padding: '30px 20px'
+      }}>
+        <div style={{
+          width: '100%',
+          maxWidth: '460px',
+          textAlign: 'center',
+          backgroundColor: 'var(--bg-card)',
+          border: '1px solid var(--border-default)',
+          borderRadius: 'var(--radius-md)',
+          padding: '48px 32px',
+          boxShadow: 'var(--shadow-sm)'
+        }}>
+          <div style={{ marginBottom: '20px' }}>
+            <Logo variant="compact" height={36} to="/" />
+          </div>
+
+          <h1 style={{
+            fontSize: '1.75rem',
+            fontWeight: 800,
+            letterSpacing: '-0.02em',
+            marginBottom: '10px'
+          }}>
+            Portfolio not found.
+          </h1>
+
+          <p style={{
+            fontSize: '0.9375rem',
+            color: 'var(--text-secondary)',
+            marginBottom: '28px',
+            lineHeight: 1.6
+          }}>
+            The portfolio for <strong style={{ color: 'var(--text-primary)' }}>/{username}</strong> doesn't exist or hasn't been published yet.
+          </p>
+
+          <Link to="/" className="btn btn-brand">
+            <ArrowLeft size={16} /> Back to BUILTD
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Render the public portfolio using the student's chosen template!
+  return <TemplateRenderer data={portfolioData} isPreview={false} />;
+};
+
+export default PublicPortfolio;
