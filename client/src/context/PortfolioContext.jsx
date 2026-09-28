@@ -211,66 +211,80 @@ export const PortfolioProvider = ({ children }) => {
   // Save changes
   const saveCurrentPortfolio = async (customData = null) => {
     setIsSaving(true);
-    const toSave = customData || portfolio;
-    const finalData = {
-      ...toSave,
-      uid: toSave.uid || currentUser?.uid || 'guest-user',
-      updatedAt: new Date().toISOString()
-    };
-    if (!finalData.createdAt) {
-      finalData.createdAt = new Date().toISOString();
+    try {
+      const toSave = customData || portfolio;
+      const finalData = {
+        ...toSave,
+        uid: toSave.uid || currentUser?.uid || 'guest-user',
+        updatedAt: new Date().toISOString()
+      };
+      if (!finalData.createdAt) {
+        finalData.createdAt = new Date().toISOString();
+      }
+      
+      const saveRes = await savePortfolio(finalData);
+      setPortfolio(finalData);
+      setLastSaved(new Date());
+      return { ...saveRes, data: finalData };
+    } finally {
+      setIsSaving(false);
     }
-    
-    await savePortfolio(finalData);
-    setPortfolio(finalData);
-    setLastSaved(new Date());
-    setIsSaving(false);
-    return finalData;
   };
 
   // Publish flow with celebration
   const publishCurrentPortfolio = async () => {
     setIsSaving(true);
-    const publishedData = {
-      ...portfolio,
-      uid: portfolio.uid || currentUser?.uid || 'guest-user',
-      published: true,
-      updatedAt: new Date().toISOString()
-    };
-    if (!publishedData.createdAt) {
-      publishedData.createdAt = new Date().toISOString();
-    }
-
-    await savePortfolio(publishedData);
-    setPortfolio(publishedData);
-    setLastSaved(new Date());
-    setIsSaving(false);
-
-    // Subtle celebration confetti
     try {
-      confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { y: 0.6 },
-        colors: ['#F25C22', '#111111', '#BDBDBD']
-      });
-    } catch (e) {
-      // non-critical
-    }
+      const publishedData = {
+        ...portfolio,
+        uid: portfolio.uid || currentUser?.uid || 'guest-user',
+        published: true,
+        updatedAt: new Date().toISOString()
+      };
+      if (!publishedData.createdAt) {
+        publishedData.createdAt = new Date().toISOString();
+      }
 
-    return publishedData;
+      const saveRes = await savePortfolio(publishedData);
+      if (!saveRes.success) {
+        throw new Error(saveRes.error || 'Failed to save published portfolio.');
+      }
+
+      setPortfolio(publishedData);
+      setLastSaved(new Date());
+
+      // Subtle celebration confetti
+      try {
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.6 },
+          colors: ['#F25C22', '#111111', '#BDBDBD']
+        });
+      } catch (e) {
+        // non-critical
+      }
+
+      return { ...saveRes, data: publishedData };
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const unpublishCurrentPortfolio = async () => {
     setIsSaving(true);
-    const unpublishedData = {
-      ...portfolio,
-      published: false,
-      updatedAt: new Date().toISOString()
-    };
-    await savePortfolio(unpublishedData);
-    setPortfolio(unpublishedData);
-    setIsSaving(false);
+    try {
+      const unpublishedData = {
+        ...portfolio,
+        published: false,
+        updatedAt: new Date().toISOString()
+      };
+      const saveRes = await savePortfolio(unpublishedData);
+      setPortfolio(unpublishedData);
+      return { ...saveRes, data: unpublishedData };
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Calculate profile completion percentage

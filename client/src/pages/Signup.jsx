@@ -3,14 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Logo } from '../components/common/Logo';
 import { useAuth } from '../context/AuthContext';
 import { usePortfolio } from '../context/PortfolioContext';
-import { AlertCircle } from 'lucide-react';
+import { AuthErrorAlert } from '../components/common/AuthErrorAlert';
 
 export const Signup = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const { signup, loginWithGoogle } = useAuth();
@@ -19,22 +19,34 @@ export const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError(null);
 
     if (!fullName.trim()) {
-      setError('Please enter your full name.');
+      setError({
+        title: 'Full Name Required',
+        description: 'Please enter your full name to set up your portfolio profile.'
+      });
       return;
     }
     if (!email.trim()) {
-      setError('Please enter a valid email address.');
+      setError({
+        title: 'Email Address Required',
+        description: 'Please enter a valid email address.'
+      });
       return;
     }
     if (password.length < 6) {
-      setError('Password should be at least 6 characters long.');
+      setError({
+        title: 'Password Too Short',
+        description: 'Your password must be at least 6 characters long.'
+      });
       return;
     }
     if (password !== confirmPassword) {
-      setError('Passwords do not match.');
+      setError({
+        title: 'Passwords Do Not Match',
+        description: 'Please make sure both passwords match.'
+      });
       return;
     }
 
@@ -45,7 +57,7 @@ export const Signup = () => {
       // Redirect directly to portfolio onboarding per requirements!
       navigate('/onboarding');
     } catch (err) {
-      setError(err.message || 'Error creating account. Please try again.');
+      setError(err);
     } finally {
       setLoading(false);
     }
@@ -54,12 +66,12 @@ export const Signup = () => {
   const handleGoogleSignUp = async () => {
     try {
       setLoading(true);
-      setError('');
+      setError(null);
       const user = await loginWithGoogle();
       updateProfile({ name: user.displayName, email: user.email });
       navigate('/onboarding');
     } catch (err) {
-      setError(err.message || 'Google sign-up failed.');
+      setError(err);
     } finally {
       setLoading(false);
     }
@@ -100,23 +112,10 @@ export const Signup = () => {
           </p>
         </div>
 
-        {error && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '10px 14px',
-            backgroundColor: '#FEF2F2',
-            border: '1px solid #F87171',
-            borderRadius: 'var(--radius-sm)',
-            color: '#B91C1C',
-            fontSize: '0.8125rem',
-            marginBottom: '20px'
-          }}>
-            <AlertCircle size={16} flexShrink={0} />
-            <span>{error}</span>
-          </div>
-        )}
+        <AuthErrorAlert
+          error={error}
+          onClose={() => setError(null)}
+        />
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">

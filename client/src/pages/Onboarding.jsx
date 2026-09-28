@@ -31,7 +31,8 @@ import {
   Tablet, 
   Copy, 
   CheckCircle2, 
-  Share2 
+  Share2,
+  AlertCircle
 } from 'lucide-react';
 
 export const Onboarding = () => {
@@ -155,6 +156,7 @@ export const Onboarding = () => {
   // Step 9: Customization & Preview Device
   const [previewDevice, setPreviewDevice] = useState('desktop');
   const [isPublishing, setIsPublishing] = useState(false);
+  const [publishError, setPublishError] = useState(null);
   const [copiedLink, setCopiedLink] = useState(false);
 
   // Real-time username check with debouncing
@@ -287,11 +289,17 @@ export const Onboarding = () => {
   // Publish Flow
   const handlePublish = async () => {
     setIsPublishing(true);
+    setPublishError(null);
     try {
-      await publishCurrentPortfolio();
-      setCurrentStep(10); // Success screen
+      const res = await publishCurrentPortfolio();
+      if (res && res.success) {
+        setCurrentStep(10); // Success screen
+      } else {
+        throw new Error(res?.error || 'Failed to publish portfolio. Please check your username and retry.');
+      }
     } catch (err) {
       console.error('Publish error:', err);
+      setPublishError(err.message || 'Unable to publish portfolio at this time. Please retry.');
     } finally {
       setIsPublishing(false);
     }
@@ -1573,8 +1581,62 @@ export const Onboarding = () => {
                 />
               </div>
 
+              {/* Error Alert if Publishing encountered an issue */}
+              {publishError && (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '12px',
+                  padding: '14px 18px',
+                  backgroundColor: '#FFF1F2',
+                  border: '1px solid #FECDD3',
+                  borderLeft: '4px solid #E11D48',
+                  borderRadius: 'var(--radius-sm)',
+                  marginBottom: '20px',
+                  boxShadow: '0 2px 6px rgba(225, 29, 72, 0.05)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      backgroundColor: '#FFE4E6',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <AlertCircle size={18} color="#E11D48" />
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: '0.875rem', color: '#9F1239' }}>
+                        Publishing Error
+                      </div>
+                      <div style={{ fontSize: '0.8125rem', color: '#881337', marginTop: '2px' }}>
+                        {publishError}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handlePublish}
+                    className="btn btn-secondary btn-sm"
+                    style={{
+                      backgroundColor: '#FFFFFF',
+                      color: '#E11D48',
+                      border: '1px solid #FECDD3',
+                      fontWeight: 600,
+                      flexShrink: 0
+                    }}
+                  >
+                    Retry Publish
+                  </button>
+                </div>
+              )}
+
               {/* Bottom Publishing Bar */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px' }}>
                 <button type="button" onClick={() => setCurrentStep(8)} className="btn btn-ghost">
                   <ArrowLeft size={16} /> Back to questions
                 </button>
@@ -1583,8 +1645,25 @@ export const Onboarding = () => {
                   disabled={isPublishing}
                   onClick={handlePublish}
                   className="btn btn-brand btn-lg"
+                  style={{
+                    minWidth: '220px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px'
+                  }}
                 >
-                  <Sparkles size={18} /> {isPublishing ? 'Publishing...' : 'Publish Portfolio'}
+                  {isPublishing ? (
+                    <>
+                      <div className="spinner" />
+                      <span>Publishing live...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={18} />
+                      <span>Publish Portfolio</span>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -1595,8 +1674,26 @@ export const Onboarding = () => {
               ============================================================ */}
           {currentStep === 10 && (
             <div style={{ textAlign: 'center', padding: '20px 0' }}>
-              <div style={{ marginBottom: '24px' }}>
+              <div style={{ marginBottom: '20px' }}>
                 <Logo variant="main" height={60} withLink={false} />
+              </div>
+
+              {/* Prominent Success Badge */}
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 18px',
+                backgroundColor: '#DCFCE7',
+                border: '1px solid #86EFAC',
+                borderRadius: 'var(--radius-full)',
+                color: '#15803D',
+                fontSize: '0.875rem',
+                fontWeight: 700,
+                marginBottom: '20px',
+                boxShadow: '0 2px 6px rgba(22, 163, 74, 0.08)'
+              }}>
+                <CheckCircle2 size={18} /> Successfully Published & Live Globally!
               </div>
 
               <div style={{

@@ -175,35 +175,68 @@ export const getPortfolioByUsername = async (rawUsername) => {
   return localData;
 };
 
-// Save or publish portfolio
+// Save or publish portfolio with instant local persistence and non-blocking cloud sync
 export const savePortfolio = async (portfolioData) => {
   const { uid, username } = portfolioData;
   const normalizedUser = normalizeUsername(username);
 
-  // Update locally first for immediate responsiveness
-  saveToLocalPortfolios(normalizedUser, portfolioData);
+  if (!normalizedUser) {
+    return { success: false, error: 'A valid portfolio username is required to publish.' };
+  }
 
+  // 1. Update locally first for 0ms instantaneous responsiveness
+  try {
+    saveToLocalPortfolios(normalizedUser, portfolioData);
+  } catch (localErr) {
+    console.error('Local save error:', localErr);
+    return { success: false, error: 'Failed to save portfolio to local storage.' };
+  }
+
+  let syncedToCloud = false;
+  let cloudError = null;
+
+  // 2. Cloud Firestore sync with timeout guard so user is NEVER blocked
   if (isFirebaseConfigured && db && uid) {
     try {
-      // 1. Claim username document
-      await setDoc(doc(db, 'usernames', normalizedUser), {
-        uid,
-        username: normalizedUser,
-        updatedAt: new Date().toISOString()
-      }, { merge: true });
+      const cloudSyncTask = (async () => {
+        await Promise.all([
+          // 1. Claim username document
+          setDoc(doc(db, 'usernames', normalizedUser), {
+            uid,
+            username: normalizedUser,
+            updatedAt: new Date().toISOString()
+          }, { merge: true }),
 
-      // 2. Save user profile document
-      await setDoc(doc(db, 'users', uid), {
-        ...portfolioData,
-        username: normalizedUser,
-        updatedAt: new Date().toISOString()
-      }, { merge: true });
+          // 2. Save user profile document
+          setDoc(doc(db, 'users', uid), {
+            ...portfolioData,
+            username: normalizedUser,
+            updatedAt: new Date().toISOString()
+          }, { merge: true })
+        ]);
+      })();
+
+      // Timeout at 1200ms: if Firestore is slow or offline, complete immediately
+      const timeoutGuard = new Promise((resolve) => 
+        setTimeout(() => resolve('TIMEOUT'), 1200)
+      );
+
+      const syncResult = await Promise.race([cloudSyncTask, timeoutGuard]);
+      if (syncResult !== 'TIMEOUT') {
+        syncedToCloud = true;
+      }
     } catch (e) {
-      console.error('Firebase save error:', e);
+      console.warn('Cloud sync note:', e.message);
+      cloudError = e.message;
     }
   }
 
-  return { success: true, username: normalizedUser };
+  return { 
+    success: true, 
+    username: normalizedUser, 
+    syncedToCloud, 
+    cloudError 
+  };
 };
 
 // Upload image file (saves as `username.png` or `project-X.png`)

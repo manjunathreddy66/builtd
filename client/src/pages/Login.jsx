@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Logo } from '../components/common/Logo';
 import { useAuth } from '../context/AuthContext';
-import { ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { AuthErrorAlert } from '../components/common/AuthErrorAlert';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
   const [resetMessage, setResetMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -16,10 +17,13 @@ export const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError(null);
     setResetMessage('');
     if (!email || !password) {
-      setError('Please fill in both email and password.');
+      setError({
+        title: 'Missing Information',
+        description: 'Please enter both your email address and password to continue.'
+      });
       return;
     }
 
@@ -28,7 +32,7 @@ export const Login = () => {
       await login(email, password);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.message || 'Failed to sign in. Please verify your credentials.');
+      setError(err);
     } finally {
       setLoading(false);
     }
@@ -37,11 +41,11 @@ export const Login = () => {
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
-      setError('');
+      setError(null);
       await loginWithGoogle();
       navigate('/dashboard');
     } catch (err) {
-      setError(err.message || 'Google sign-in was cancelled or encountered an issue.');
+      setError(err);
     } finally {
       setLoading(false);
     }
@@ -49,15 +53,18 @@ export const Login = () => {
 
   const handleForgotPassword = async () => {
     if (!email) {
-      setError('Please enter your email above to receive password reset instructions.');
+      setError({
+        title: 'Email Required for Password Reset',
+        description: 'Please type your email address in the field above first, then click "Forgot password?".'
+      });
       return;
     }
     try {
       await resetPassword(email);
-      setResetMessage('Password reset link sent to your email.');
-      setError('');
+      setResetMessage(`Password reset link sent to ${email}. Please check your inbox.`);
+      setError(null);
     } catch (err) {
-      setError(err.message || 'Error sending password reset email.');
+      setError(err);
     }
   };
 
@@ -96,23 +103,11 @@ export const Login = () => {
           </p>
         </div>
 
-        {error && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '10px 14px',
-            backgroundColor: '#FEF2F2',
-            border: '1px solid #F87171',
-            borderRadius: 'var(--radius-sm)',
-            color: '#B91C1C',
-            fontSize: '0.8125rem',
-            marginBottom: '20px'
-          }}>
-            <AlertCircle size={16} flexShrink={0} />
-            <span>{error}</span>
-          </div>
-        )}
+        <AuthErrorAlert
+          error={error}
+          onClose={() => setError(null)}
+          onForgotPassword={handleForgotPassword}
+        />
 
         {resetMessage && (
           <div style={{

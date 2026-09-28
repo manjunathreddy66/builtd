@@ -21,7 +21,8 @@ import {
   Laptop,
   Tablet,
   Smartphone,
-  Sparkles
+  Sparkles,
+  AlertCircle
 } from 'lucide-react';
 
 export const Editor = () => {
@@ -42,7 +43,7 @@ export const Editor = () => {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [showLivePreview, setShowLivePreview] = useState(true);
   const [previewDevice, setPreviewDevice] = useState('desktop');
-  const [saveToast, setSaveToast] = useState(false);
+  const [saveToast, setSaveToast] = useState(null);
 
   // Form local states initialized from portfolio
   const [name, setName] = useState(portfolio.profile?.name || '');
@@ -116,9 +117,17 @@ export const Editor = () => {
       resumeUrl
     };
 
-    await saveCurrentPortfolio(updated);
-    setSaveToast(true);
-    setTimeout(() => setSaveToast(false), 2500);
+    try {
+      const res = await saveCurrentPortfolio(updated);
+      if (res && res.success) {
+        setSaveToast({ type: 'success', message: 'Changes saved successfully.' });
+      } else {
+        setSaveToast({ type: 'error', message: res?.error || 'Failed to save changes.' });
+      }
+    } catch (err) {
+      setSaveToast({ type: 'error', message: err.message || 'Error saving changes.' });
+    }
+    setTimeout(() => setSaveToast(null), 3000);
   };
 
   const handleProfileImageUpload = async (e) => {
@@ -189,7 +198,7 @@ export const Editor = () => {
           position: 'fixed',
           bottom: '24px',
           right: '24px',
-          backgroundColor: '#111111',
+          backgroundColor: saveToast.type === 'error' ? '#9F1239' : '#111111',
           color: '#FFFFFF',
           padding: '12px 20px',
           borderRadius: 'var(--radius-sm)',
@@ -197,10 +206,16 @@ export const Editor = () => {
           fontSize: '0.875rem',
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
-          zIndex: 1000
+          gap: '10px',
+          zIndex: 1000,
+          animation: 'authAlertFadeIn 0.2s ease-out'
         }}>
-          <Check size={16} color="var(--brand-orange)" /> Changes saved successfully.
+          {saveToast.type === 'error' ? (
+            <AlertCircle size={17} color="#FECDD3" />
+          ) : (
+            <Check size={17} color="var(--brand-orange)" />
+          )}
+          <span>{saveToast.message}</span>
         </div>
       )}
 
