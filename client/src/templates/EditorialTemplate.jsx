@@ -12,6 +12,7 @@ import {
   Award, 
   CheckCircle2 
 } from 'lucide-react';
+import { Github } from '../components/common/Icons';
 
 export const EditorialTemplate = ({ data }) => {
   const { 

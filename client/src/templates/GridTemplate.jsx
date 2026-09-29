@@ -13,6 +13,7 @@ import {
   Award, 
   Sparkles 
 } from 'lucide-react';
+import { Github } from '../components/common/Icons';
 
 export const GridTemplate = ({ data }) => {
   const { 

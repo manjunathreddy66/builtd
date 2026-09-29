@@ -12,6 +12,7 @@ import {
   Briefcase, 
   Award 
 } from 'lucide-react';
+import { Github } from '../components/common/Icons';
 
 export const MinimalTemplate = ({ data }) => {
   const { profile = {}, education = [], skills = [], projects = [], experience = [], achievements = [], certifications = [], links = {}, resumeUrl = '', settings = {} } = data;
