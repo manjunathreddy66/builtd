@@ -69,7 +69,7 @@ export const PublicPortfolio = () => {
         <img 
           src="/built.png" 
           alt="BUILTD" 
-          style={{ height: '36px', width: 'auto', filter: 'drop-shadow(0 2px 8px rgba(242, 92, 34, 0.12))' }} 
+          style={{ height: '36px', width: 'auto' }} 
         />
         <div style={{
           fontFamily: 'var(--font-mono)',

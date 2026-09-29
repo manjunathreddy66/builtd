@@ -59,8 +59,7 @@ export const Navbar = () => {
               style={{ 
                 height: '36px', 
                 width: 'auto', 
-                objectFit: 'contain',
-                filter: 'drop-shadow(0 2px 8px rgba(242, 92, 34, 0.12))' 
+                objectFit: 'contain'
               }} 
             />
           </Link>

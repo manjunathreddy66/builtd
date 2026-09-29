@@ -698,12 +698,12 @@ button, a, input, select, textarea {
 
 .ios-btn:hover {
   transform: translateY(-2px) scale(1.025);
-  box-shadow: 0 12px 28px rgba(242, 92, 34, 0.32) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08) !important;
 }
 
 .ios-btn:active {
   transform: scale(0.96) !important;
-  box-shadow: 0 4px 12px rgba(242, 92, 34, 0.2) !important;
+  box-shadow: none !important;
 }
 
 /* ============================================================

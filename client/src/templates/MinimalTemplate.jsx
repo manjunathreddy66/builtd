@@ -59,8 +59,7 @@ export const MinimalTemplate = ({ data }) => {
               width: '8px',
               height: '8px',
               borderRadius: '50%',
-              backgroundColor: '#10B981',
-              boxShadow: '0 0 0 3px rgba(16, 185, 129, 0.25)'
+              backgroundColor: '#10B981'
             }} />
             <span style={{ fontWeight: 800, fontSize: '0.9375rem', letterSpacing: '-0.02em', color: theme.textPrimary }}>
               {profile.name || 'Portfolio'}

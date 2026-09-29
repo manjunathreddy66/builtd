@@ -64,10 +64,8 @@ export const getThemeStyles = (settings = {}) => {
       };
     }
     if (bgPattern === 'soft') {
-      const glowColor = isDark ? 'rgba(242, 92, 34, 0.07)' : 'rgba(242, 92, 34, 0.04)';
       return {
-        backgroundImage: `radial-gradient(ellipse at 50% 0%, ${glowColor} 0%, transparent 65%)`,
-        backgroundRepeat: 'no-repeat',
+        backgroundImage: 'linear-gradient(180deg, #FFFFFF 0%, #F8F9FA 100%)',
         backgroundAttachment: 'fixed'
       };
     }

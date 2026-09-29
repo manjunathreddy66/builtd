@@ -191,7 +191,7 @@ export const CreativeTemplate = ({ data }) => {
                   objectFit: 'cover',
                   borderRadius: avatarShape === 'circle' ? '50%' : '12px',
                   border: `3px solid ${theme.borderDefault}`,
-                  boxShadow: `0 8px 24px ${theme.accentSubtle}`
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.06)'
                 }}
               />
             )}
