@@ -71,6 +71,7 @@ export const ProfessionalTemplate = ({ data }) => {
                   fontWeight: 800,
                   letterSpacing: '-0.02em',
                   marginBottom: '6px',
+                  color: theme.textPrimary,
                   ...theme.invertedTitleStyle
                 }}>
                   {profile.name}
@@ -105,7 +106,7 @@ export const ProfessionalTemplate = ({ data }) => {
                   rel="noreferrer"
                   style={{
                     backgroundColor: theme.accent,
-                    color: '#FFFFFF',
+                    color: theme.accentText || '#FFFFFF',
                     padding: '10px 18px',
                     borderRadius: '6px',
                     fontSize: '0.875rem',

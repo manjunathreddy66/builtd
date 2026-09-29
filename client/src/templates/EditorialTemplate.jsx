@@ -99,6 +99,7 @@ export const EditorialTemplate = ({ data }) => {
                 lineHeight: 0.95,
                 textTransform: 'uppercase',
                 marginBottom: '22px',
+                color: theme.textPrimary,
                 ...theme.invertedTitleStyle
               }}>
                 {profile.name}
@@ -134,7 +135,7 @@ export const EditorialTemplate = ({ data }) => {
                     href="#projects"
                     style={{
                       backgroundColor: theme.accent,
-                      color: '#FFFFFF',
+                      color: theme.accentText || '#FFFFFF',
                       padding: '12px 26px',
                       fontWeight: 700,
                       fontSize: '0.9375rem',

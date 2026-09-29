@@ -134,6 +134,7 @@ export const CreativeTemplate = ({ data }) => {
                 letterSpacing: '-0.03em',
                 lineHeight: 1.08,
                 marginBottom: '12px',
+                color: theme.textPrimary,
                 ...theme.invertedTitleStyle
               }}>
                 {profile.name}
@@ -165,7 +166,7 @@ export const CreativeTemplate = ({ data }) => {
                     href="#projects"
                     style={{
                       backgroundColor: theme.accent,
-                      color: '#FFFFFF',
+                      color: theme.accentText || '#FFFFFF',
                       padding: '10px 20px',
                       borderRadius: '6px',
                       fontWeight: 600,

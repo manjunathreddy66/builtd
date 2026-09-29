@@ -4,6 +4,7 @@ import { usePortfolio } from '../context/PortfolioContext';
 import { TemplateRenderer, TEMPLATE_OPTIONS } from '../templates/TemplateRenderer';
 import { SUGGESTED_SKILLS } from '../services/initialData';
 import { uploadPortfolioAsset } from '../services/portfolioService';
+import { CustomUiColorPicker } from '../components/common/CustomUiColorPicker';
 import { 
   HEADLINE_SUGGESTIONS, 
   BIO_SUGGESTIONS, 
@@ -562,21 +563,11 @@ export const Editor = () => {
                 </div>
 
 
-                <div className="form-group" style={{ marginTop: '20px' }}>
-                  <label className="form-label">Accent Color</label>
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    {['orange', 'blue', 'purple', 'green', 'red'].map((acc) => (
-                      <button
-                        key={acc}
-                        onClick={() => updateSettings({ accent: acc })}
-                        className={`chip ${(portfolio.settings?.accent || 'orange') === acc ? 'active' : ''}`}
-                        style={{ textTransform: 'capitalize' }}
-                      >
-                        {acc}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                {/* Color & Theme Styling (Presets + Custom UI Option) */}
+                <CustomUiColorPicker 
+                  settings={portfolio.settings || {}} 
+                  updateSettings={updateSettings} 
+                />
 
                 <div className="form-group" style={{ marginTop: '20px' }}>
                   <label className="form-label">Avatar Shape</label>

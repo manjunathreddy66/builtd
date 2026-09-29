@@ -4,6 +4,7 @@ import EditorialTemplate from './EditorialTemplate';
 import GridTemplate from './GridTemplate';
 import CreativeTemplate from './CreativeTemplate';
 import ProfessionalTemplate from './ProfessionalTemplate';
+import { getThemeStyles } from './templateUtils';
 
 export const TEMPLATE_OPTIONS = [
   {
@@ -40,6 +41,7 @@ export const TEMPLATE_OPTIONS = [
 
 export const TemplateRenderer = ({ data, device = 'desktop', isPreview = false }) => {
   const templateId = data?.settings?.template || 'editorial';
+  const theme = getThemeStyles(data?.settings || {});
 
   const renderTemplate = () => {
     switch (templateId) {
@@ -93,7 +95,7 @@ export const TemplateRenderer = ({ data, device = 'desktop', isPreview = false }
           boxShadow: device === 'desktop' ? 'none' : '0 20px 50px rgba(0,0,0,0.2)',
           transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
           position: 'relative',
-          backgroundColor: '#FFFFFF'
+          backgroundColor: theme.bgMain || '#FFFFFF'
         }}
         className="preview-device-frame"
       >

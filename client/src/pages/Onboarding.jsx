@@ -15,6 +15,7 @@ import {
   generateProjectDescriptions 
 } from '../utils/autoSuggestions';
 import { TemplateRenderer, TEMPLATE_OPTIONS } from '../templates/TemplateRenderer';
+import { CustomUiColorPicker } from '../components/common/CustomUiColorPicker';
 import { 
   ArrowRight, 
   ArrowLeft, 
@@ -1483,7 +1484,15 @@ export const Onboarding = () => {
                 })}
               </div>
 
-              {/* Theme & Accent Pickers */}
+              {/* Color & Theme Styling (Presets + Custom UI Option) */}
+              <div style={{ marginBottom: '20px' }}>
+                <CustomUiColorPicker 
+                  settings={portfolio.settings || {}} 
+                  updateSettings={updateSettings} 
+                />
+              </div>
+
+              {/* Inversion & Background Design */}
               <div style={{
                 display: 'flex',
                 flexWrap: 'wrap',
@@ -1494,35 +1503,6 @@ export const Onboarding = () => {
                 borderRadius: 'var(--radius-sm)',
                 marginBottom: '28px'
               }}>
-
-                <div>
-                  <span style={{ fontSize: '0.8125rem', fontWeight: 600, marginRight: '10px' }}>Accent:</span>
-                  <div style={{ display: 'inline-flex', gap: '6px' }}>
-                    {[
-                      { id: 'orange', color: '#F25C22' },
-                      { id: 'blue', color: '#2563EB' },
-                      { id: 'purple', color: '#7C3AED' },
-                      { id: 'green', color: '#059669' },
-                      { id: 'red', color: '#DC2626' }
-                    ].map((acc) => (
-                      <button
-                        key={acc.id}
-                        type="button"
-                        onClick={() => updateSettings({ accent: acc.id })}
-                        style={{
-                          width: '24px',
-                          height: '24px',
-                          borderRadius: '50%',
-                          backgroundColor: acc.color,
-                          border: (portfolio.settings?.accent || 'orange') === acc.id ? '2px solid #111111' : 'none',
-                          transform: (portfolio.settings?.accent || 'orange') === acc.id ? 'scale(1.2)' : 'none',
-                          cursor: 'pointer'
-                        }}
-                        title={acc.id}
-                      />
-                    ))}
-                  </div>
-                </div>
 
                 <div>
                   <span style={{ fontSize: '0.8125rem', fontWeight: 600, marginRight: '10px' }}>Text Inversion:</span>

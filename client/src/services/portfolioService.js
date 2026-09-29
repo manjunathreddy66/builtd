@@ -490,12 +490,17 @@ export const registerNewUserPortfolio = async (rawUsername, fullName, email, cus
     settings: {
       template: customData.settings?.template || 'editorial',
       theme: customData.settings?.theme || 'light',
-      accent: 'orange',
-      font: 'space',
-      layout: 'editorial',
-      avatarShape: 'circle',
-      textInversion: false,
-      bgPattern: 'dots'
+      accent: customData.settings?.accent || 'orange',
+      font: customData.settings?.font || 'space',
+      layout: customData.settings?.layout || 'editorial',
+      avatarShape: customData.settings?.avatarShape || 'circle',
+      textInversion: Boolean(customData.settings?.textInversion),
+      bgPattern: customData.settings?.bgPattern || 'dots',
+      colorMode: customData.settings?.colorMode || 'preset',
+      customUiEnabled: Boolean(customData.settings?.customUiEnabled),
+      customBgColor: customData.settings?.customBgColor || '#F8F9FA',
+      customTextColor: customData.settings?.customTextColor || '#111827',
+      customHighlightColor: customData.settings?.customHighlightColor || '#F25C22'
     }
   };
 
