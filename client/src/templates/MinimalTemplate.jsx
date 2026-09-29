@@ -428,7 +428,7 @@ export const MinimalTemplate = ({ data }) => {
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
           <Logo variant="compact" height={20} to="/" />
           <span style={{ fontSize: '0.8125rem', color: theme.textMuted }}>
-            Built with <img src="/builtd.png" alt="BUILTD" style={{ height: '16px', verticalAlign: 'middle', display: 'inline-block', margin: '0 4px' }} /> — Build your digital identity.
+            Built with <img src="/built.png" alt="BUILTD" style={{ height: '16px', verticalAlign: 'middle', display: 'inline-block', margin: '0 4px' }} /> — Build your digital identity.
           </span>
         </div>
       </footer>

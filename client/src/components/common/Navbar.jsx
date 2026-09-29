@@ -36,11 +36,11 @@ export const Navbar = () => {
         justifyContent: 'space-between',
         height: '70px'
       }}>
-        {/* Brand Logo: builtd.png */}
+        {/* Brand Logo: built.png */}
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Link to="/" style={{ display: 'inline-flex', alignItems: 'center' }} aria-label="BUILTD">
             <img 
-              src="/builtd.png" 
+              src="/built.png" 
               alt="BUILTD" 
               style={{ height: '36px', width: 'auto', objectFit: 'contain' }} 
             />

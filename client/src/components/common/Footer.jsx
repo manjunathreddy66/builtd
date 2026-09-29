@@ -26,7 +26,7 @@ export const Footer = () => {
             aria-label="BUILTD"
           >
             <img 
-              src="/builtd.png" 
+              src="/built.png" 
               alt="BUILTD" 
               style={{ height: '20px', verticalAlign: 'middle', display: 'inline-block' }} 
             />
@@ -43,7 +43,7 @@ export const Footer = () => {
             aria-label="BUILTD"
           >
             <img 
-              src="/builtd.png" 
+              src="/built.png" 
               alt="BUILTD" 
               style={{ height: '18px', verticalAlign: 'middle', display: 'inline-block' }} 
             />
