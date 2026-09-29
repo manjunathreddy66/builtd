@@ -706,3 +706,72 @@ button, a, input, select, textarea {
   box-shadow: 0 4px 12px rgba(242, 92, 34, 0.2) !important;
 }
 
+/* ============================================================
+   iOS FROSTED GLASS NAVBAR & STATUS ELEVATION
+   ============================================================ */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: rgba(245, 245, 243, 0.72) !important;
+  backdrop-filter: blur(20px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  transition: background-color 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+              box-shadow 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+              border-color 0.35s ease;
+  padding-top: max(env(safe-area-inset-top), 0px);
+}
+
+.site-header.is-scrolled {
+  background-color: rgba(245, 245, 243, 0.85) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+}
+
+/* iOS Mobile Menu Drawer */
+.ios-mobile-sheet {
+  background-color: rgba(245, 245, 243, 0.92) !important;
+  backdrop-filter: blur(24px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(200%) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  animation: iosSheetDown 0.38s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes iosSheetDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ============================================================
+   iOS SCROLL-REVEAL ANIMATIONS (SMOOTH SPRING ENTRANCE)
+   ============================================================ */
+.ios-reveal {
+  opacity: 0;
+  transform: translateY(28px) scale(0.982);
+  transition: opacity 0.72s cubic-bezier(0.32, 0.72, 0, 1),
+              transform 0.72s cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: opacity, transform;
+}
+
+.ios-reveal.is-revealed {
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+/* Staggered Entrance Delays */
+.ios-reveal-delay-1 { transition-delay: 0.07s; }
+.ios-reveal-delay-2 { transition-delay: 0.14s; }
+.ios-reveal-delay-3 { transition-delay: 0.21s; }
+.ios-reveal-delay-4 { transition-delay: 0.28s; }
+

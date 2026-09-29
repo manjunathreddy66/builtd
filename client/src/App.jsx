@@ -11,9 +11,13 @@ import Editor from './pages/Editor';
 import Explore from './pages/Explore';
 import PublicPortfolio from './pages/PublicPortfolio';
 import NotFound from './pages/NotFound';
+import { useScrollReveal } from './hooks/useScrollReveal';
 
 export const App = () => {
   const location = useLocation();
+
+  // Initialize global iOS scroll-reveal observer across all routes
+  useScrollReveal();
 
   // The public portfolio route (e.g. /arjun) should render as a standalone personal website
   // without the BUILTD platform header/footer, while platform pages show the BUILTD header/footer.

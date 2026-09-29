@@ -7,10 +7,21 @@ import { Menu, X, ArrowRight, LayoutDashboard, User, LogOut } from 'lucide-react
 
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { currentUser, logout } = useAuth();
   const { portfolio } = usePortfolio();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // iOS-style scroll status listener for dynamic blur and elevation
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const isAuthPage = ['/login', '/signup', '/onboarding'].includes(location.pathname);
 
@@ -21,20 +32,12 @@ export const Navbar = () => {
   };
 
   return (
-    <header className="site-header" style={{
-      position: 'sticky',
-      top: 0,
-      zIndex: 100,
-      backgroundColor: 'rgba(245, 245, 243, 0.88)',
-      backdropFilter: 'blur(12px)',
-      borderBottom: '1px solid var(--border-default)',
-      transition: 'background-color var(--transition-base)'
-    }}>
+    <header className={`site-header ${isScrolled ? 'is-scrolled' : ''}`}>
       <div className="container" style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: '70px'
+        height: '68px'
       }}>
         {/* Brand Logo: built.png */}
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -90,7 +93,7 @@ export const Navbar = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
               <Link 
                 to="/dashboard" 
-                className="btn btn-secondary btn-sm"
+                className="btn btn-secondary btn-sm ios-btn"
                 style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
               >
                 <LayoutDashboard size={16} />
@@ -100,7 +103,7 @@ export const Navbar = () => {
                 <Link
                   to={`/${portfolio.username}`}
                   target="_blank"
-                  className="btn btn-brand btn-sm"
+                  className="btn btn-brand btn-sm ios-btn"
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                 >
                   <User size={15} />
@@ -109,7 +112,7 @@ export const Navbar = () => {
               )}
               <button 
                 onClick={handleLogout}
-                className="btn btn-ghost btn-sm"
+                className="btn btn-ghost btn-sm ios-btn"
                 title="Log out"
                 style={{ color: 'var(--text-muted)' }}
               >
@@ -120,14 +123,14 @@ export const Navbar = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
               <Link 
                 to="/login" 
-                className="btn btn-ghost btn-sm"
+                className="btn btn-ghost btn-sm ios-btn"
                 style={{ fontWeight: 600 }}
               >
                 Login
               </Link>
               <Link 
                 to="/signup" 
-                className="btn btn-brand btn-sm"
+                className="btn btn-brand btn-sm ios-btn"
               >
                 Build My Portfolio <ArrowRight size={14} />
               </Link>
@@ -137,28 +140,29 @@ export const Navbar = () => {
 
         {/* Mobile Hamburger Button */}
         <button
-          className="mobile-toggle"
+          className="mobile-toggle ios-btn"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
           style={{
             display: 'none',
-            padding: '8px',
-            color: 'var(--text-primary)'
+            padding: '8px 10px',
+            color: 'var(--text-primary)',
+            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+            border: '1px solid var(--border-default)',
+            borderRadius: '10px'
           }}
         >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer (iOS Frosted Glass Sheet) */}
       {mobileMenuOpen && (
-        <div className="mobile-menu" style={{
-          backgroundColor: 'var(--bg-main)',
-          borderBottom: '1px solid var(--border-default)',
-          padding: '24px 20px',
+        <div className="mobile-menu ios-mobile-sheet" style={{
+          padding: '20px 18px 26px 18px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '18px'
+          gap: '14px'
         }}>
 
           {currentUser ? (
@@ -166,8 +170,8 @@ export const Navbar = () => {
               <Link 
                 to="/dashboard"
                 onClick={() => setMobileMenuOpen(false)}
-                className="btn btn-secondary"
-                style={{ width: '100%' }}
+                className="btn btn-secondary ios-btn"
+                style={{ width: '100%', justifyContent: 'center' }}
               >
                 <LayoutDashboard size={16} /> Dashboard
               </Link>
@@ -175,16 +179,16 @@ export const Navbar = () => {
                 <Link
                   to={`/${portfolio.username}`}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="btn btn-brand"
-                  style={{ width: '100%' }}
+                  className="btn btn-brand ios-btn"
+                  style={{ width: '100%', justifyContent: 'center' }}
                 >
                   <User size={16} /> View My Portfolio
                 </Link>
               )}
               <button
                 onClick={handleLogout}
-                className="btn btn-ghost"
-                style={{ width: '100%', justifyContent: 'flex-start' }}
+                className="btn btn-ghost ios-btn"
+                style={{ width: '100%', justifyContent: 'center', color: 'var(--accent-red)' }}
               >
                 <LogOut size={16} /> Log out
               </button>
@@ -194,16 +198,16 @@ export const Navbar = () => {
               <Link 
                 to="/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="btn btn-secondary"
-                style={{ width: '100%' }}
+                className="btn btn-secondary ios-btn"
+                style={{ width: '100%', justifyContent: 'center' }}
               >
                 Login
               </Link>
               <Link 
                 to="/signup"
                 onClick={() => setMobileMenuOpen(false)}
-                className="btn btn-brand"
-                style={{ width: '100%' }}
+                className="btn btn-brand ios-btn"
+                style={{ width: '100%', justifyContent: 'center' }}
               >
                 Build My Portfolio →
               </Link>

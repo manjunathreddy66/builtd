@@ -139,7 +139,7 @@ export const Dashboard = () => {
           {/* Main Dashboard Content */}
           <main style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
             {/* Welcome & Status Hero */}
-            <div style={{
+            <div className="ios-reveal ios-card" style={{
               backgroundColor: 'var(--bg-card)',
               border: '1px solid var(--border-default)',
               borderRadius: 'var(--radius-md)',
@@ -195,21 +195,21 @@ export const Dashboard = () => {
                     href={`/${username}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="btn btn-brand btn-sm"
+                    className="btn btn-brand btn-sm ios-btn"
                     style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                   >
                     <Eye size={15} /> View Portfolio
                   </a>
                   <Link
                     to="/editor"
-                    className="btn btn-secondary btn-sm"
+                    className="btn btn-secondary btn-sm ios-btn"
                     style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                   >
                     <Edit3 size={15} /> Edit Content
                   </Link>
                   <button
                     onClick={copyUrl}
-                    className="btn btn-secondary btn-sm"
+                    className="btn btn-secondary btn-sm ios-btn"
                     style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                   >
                     {copied ? <CheckCircle2 size={15} color="#16A34A" /> : <Copy size={15} />}
@@ -259,7 +259,7 @@ export const Dashboard = () => {
             </div>
 
             {/* Profile Completion Card */}
-            <div style={{
+            <div className="ios-reveal ios-card" style={{
               backgroundColor: 'var(--bg-card)',
               border: '1px solid var(--border-default)',
               borderRadius: 'var(--radius-md)',

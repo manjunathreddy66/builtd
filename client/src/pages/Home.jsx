@@ -135,9 +135,9 @@ export const Home = () => {
             </p>
 
             {/* FUNCTION 1: INTERACTIVE LIVE CLAIMER BAR */}
-            <div style={{
+            <div className="ios-reveal" style={{
               backgroundColor: 'var(--bg-card)',
-              padding: '12px 14px',
+              padding: '14px 16px',
               borderRadius: 'var(--radius-md)',
               border: '1px solid var(--border-default)',
               boxShadow: 'var(--shadow-md)',
@@ -190,7 +190,7 @@ export const Home = () => {
 
                 <button
                   onClick={() => navigate(claimHandle ? `/signup?handle=${normalizeUsername(claimHandle)}` : '/signup')}
-                  className="btn btn-brand"
+                  className="btn btn-brand ios-btn"
                   style={{
                     padding: '12px 20px',
                     minHeight: '48px',
@@ -266,7 +266,7 @@ export const Home = () => {
       }}>
         <div className="container">
           
-          <div style={{ marginBottom: '28px' }}>
+          <div className="ios-reveal" style={{ marginBottom: '28px' }}>
             <div className="section-tag">Instant Utilities</div>
             <h2 style={{ fontSize: 'clamp(1.5rem, 3.2vw, 2.1rem)', fontWeight: 800, letterSpacing: '-0.02em' }}>
               Built-in student tools.
@@ -276,7 +276,7 @@ export const Home = () => {
           <div className="auto-grid" style={{ gap: '20px' }}>
             
             {/* Tool A: Quick Lookup / Search */}
-            <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="card ios-card ios-reveal ios-reveal-delay-1" style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                 <Search size={20} color="var(--brand-orange)" />
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Find Student Portfolio</h3>
@@ -294,7 +294,7 @@ export const Home = () => {
                   className="form-input"
                   style={{ padding: '10px 12px', fontSize: '0.875rem' }}
                 />
-                <button type="submit" className="btn btn-primary" style={{ padding: '10px 16px' }}>
+                <button type="submit" className="btn btn-primary ios-btn" style={{ padding: '10px 16px' }}>
                   Go →
                 </button>
               </form>
@@ -306,7 +306,7 @@ export const Home = () => {
             </div>
 
             {/* Tool B: Instant QR Code Generator */}
-            <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="card ios-card ios-reveal ios-reveal-delay-2" style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                 <QrCode size={20} color="var(--brand-orange)" />
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Generate Portfolio QR</h3>
@@ -345,7 +345,7 @@ export const Home = () => {
             </div>
 
             {/* Tool C: One-Click Share */}
-            <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="card ios-card ios-reveal ios-reveal-delay-3" style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                 <Share2 size={20} color="var(--brand-orange)" />
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>One-Click Link Share</h3>
@@ -357,7 +357,7 @@ export const Home = () => {
               <button
                 type="button"
                 onClick={() => handleCopyUrl(claimHandle)}
-                className="btn btn-secondary"
+                className="btn btn-secondary ios-btn"
                 style={{ width: '100%', justifyContent: 'space-between', padding: '10px 14px' }}
               >
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem' }}>
@@ -388,7 +388,7 @@ export const Home = () => {
         position: 'relative',
         overflow: 'hidden'
       }}>
-        <div className="container-narrow">
+        <div className="container-narrow ios-reveal">
           <h2 className="ios-spring-up" style={{
             fontSize: 'clamp(1.85rem, 4.2vw, 2.65rem)',
             fontWeight: 800,
