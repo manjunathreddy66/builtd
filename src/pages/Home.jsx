@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Logo } from '../components/common/Logo';
 import {
   ArrowRight,
   CheckCircle2,
@@ -379,40 +378,49 @@ export const Home = () => {
       </section>
 
       {/* ============================================================
-          CALL TO ACTION (CLEAN & DIRECT)
+          CALL TO ACTION (CLEAN & DIRECT WITH iOS FLUID TRANSITIONS)
           ============================================================ */}
       <section style={{
-        padding: '70px 0',
+        padding: '76px 0',
         backgroundColor: 'var(--bg-card)',
-        textAlign: 'center'
+        textAlign: 'center',
+        borderTop: '1px solid var(--border-default)',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
         <div className="container-narrow">
-          <Logo variant="compact" height={36} withLink={false} />
-          
-          <h2 style={{
-            fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+          <h2 className="ios-spring-up" style={{
+            fontSize: 'clamp(1.85rem, 4.2vw, 2.65rem)',
             fontWeight: 800,
             letterSpacing: '-0.025em',
-            margin: '18px 0 10px 0'
+            margin: '0 0 14px 0',
+            color: 'var(--text-primary)'
           }}>
             Ready to claim your digital identity?
           </h2>
 
-          <p style={{
-            fontSize: '1rem',
+          <p className="ios-spring-delayed-1" style={{
+            fontSize: '1.05rem',
             color: 'var(--text-secondary)',
-            marginBottom: '28px',
+            marginBottom: '32px',
             maxWidth: '520px',
-            margin: '0 auto 28px auto'
+            margin: '0 auto 32px auto',
+            lineHeight: 1.6
           }}>
             Setup takes less than 3 minutes. Zero code required.
           </p>
 
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <div className="ios-spring-delayed-2" style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
             <Link
               to={claimHandle ? `/signup?handle=${claimHandle}` : '/signup'}
-              className="btn btn-brand btn-lg"
-              style={{ maxWidth: '320px' }}
+              className="btn btn-brand btn-lg ios-btn"
+              style={{ 
+                maxWidth: '320px',
+                width: '100%',
+                padding: '14px 28px',
+                fontSize: '1rem',
+                fontWeight: 700
+              }}
             >
               Build My Portfolio Now →
             </Link>
