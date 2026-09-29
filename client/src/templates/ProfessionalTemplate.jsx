@@ -155,7 +155,7 @@ export const ProfessionalTemplate = ({ data }) => {
       <div className="container" style={{ maxWidth: '1000px', padding: 'clamp(30px, 5vw, 50px) clamp(14px, 4vw, 20px) 80px clamp(14px, 4vw, 20px)' }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
           gap: '32px'
         }}>
           {/* Left Column: Bio, Experience, Education */}

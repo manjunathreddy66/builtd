@@ -73,12 +73,14 @@ export const EditorialTemplate = ({ data }) => {
         backgroundColor: theme.bgCard
       }}>
         <div className="container">
-          <div className="editorial-hero-grid" style={{
-            display: 'grid',
-            gridTemplateColumns: profile.profileImage && avatarShape !== 'none' ? '1fr 280px' : '1fr',
-            gap: '50px',
-            alignItems: 'center'
-          }}>
+          <div 
+            className={`editorial-hero-grid ${(!profile.profileImage || avatarShape === 'none') ? 'no-avatar' : ''}`}
+            style={{
+              display: 'grid',
+              gap: 'clamp(24px, 4.5vw, 50px)',
+              alignItems: 'center'
+            }}
+          >
             <div>
               <div style={{
                 fontFamily: 'var(--font-mono)',
@@ -188,8 +190,8 @@ export const EditorialTemplate = ({ data }) => {
                     src={profile.profileImage}
                     alt={profile.name}
                     style={{
-                      width: '240px',
-                      height: '240px',
+                      width: 'clamp(140px, 35vw, 240px)',
+                      height: 'clamp(140px, 35vw, 240px)',
                       objectFit: 'cover',
                       display: 'block'
                     }}
@@ -241,24 +243,23 @@ export const EditorialTemplate = ({ data }) => {
               {projects.map((proj, idx) => (
                 <div 
                   key={proj.id || idx}
+                  className={`editorial-project-card ${proj.image ? 'has-image' : 'no-image'}`}
                   style={{
-                    display: 'grid',
-                    gridTemplateColumns: proj.image ? '1.1fr 1fr' : '1fr',
-                    gap: '36px',
-                    alignItems: 'center',
                     backgroundColor: theme.bgCard,
                     border: `1px solid ${theme.borderDefault}`,
-                    borderRadius: '4px',
-                    padding: '30px'
+                    borderRadius: '4px'
                   }}
                 >
                   {proj.image && (
-                    <div style={{
-                      borderRadius: '2px',
-                      overflow: 'hidden',
-                      border: `1px solid ${theme.borderLight}`,
-                      height: '260px'
-                    }}>
+                    <div 
+                      className="editorial-project-image-box"
+                      style={{
+                        borderRadius: '2px',
+                        overflow: 'hidden',
+                        border: `1px solid ${theme.borderLight}`,
+                        height: '260px'
+                      }}
+                    >
                       <img 
                         src={proj.image} 
                         alt={proj.name}
@@ -399,7 +400,7 @@ export const EditorialTemplate = ({ data }) => {
 
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 130px), 1fr))',
               gap: '12px'
             }}>
               {skills.map((skill, i) => (
@@ -453,8 +454,8 @@ export const EditorialTemplate = ({ data }) => {
 
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-              gap: '36px'
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
+              gap: 'clamp(20px, 3.5vw, 36px)'
             }}>
               {/* Education Column */}
               {education.length > 0 && (
@@ -586,7 +587,7 @@ export const EditorialTemplate = ({ data }) => {
 
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))',
               gap: '20px'
             }}>
               {achievements.map((ach, i) => (

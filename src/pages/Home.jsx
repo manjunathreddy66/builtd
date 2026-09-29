@@ -147,8 +147,8 @@ export const Home = () => {
               flexDirection: 'column',
               gap: '10px'
             }}>
-              <div className="mobile-stack" style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%' }}>
-                <div style={{
+              <div className="mobile-stack claim-bar-inner" style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%' }}>
+                <div className="claim-input-box" style={{
                   display: 'flex',
                   alignItems: 'center',
                   backgroundColor: 'var(--bg-main)',
@@ -156,10 +156,11 @@ export const Home = () => {
                   borderRadius: 'var(--radius-sm)',
                   padding: '4px 12px',
                   flexGrow: 1,
-                  minHeight: '48px'
+                  minHeight: '48px',
+                  width: '100%'
                 }}>
                   <Globe size={18} color="var(--brand-orange)" style={{ marginRight: '8px', flexShrink: 0 }} />
-                  <span style={{
+                  <span className="claim-domain-prefix" style={{
                     fontFamily: 'var(--font-mono)',
                     fontSize: '0.9rem',
                     color: 'var(--text-secondary)',
@@ -183,14 +184,15 @@ export const Home = () => {
                       fontSize: '0.95rem',
                       color: 'var(--brand-orange)',
                       width: '100%',
-                      padding: '4px 6px'
+                      padding: '4px 6px',
+                      minWidth: '60px'
                     }}
                   />
                 </div>
 
                 <button
                   onClick={() => navigate(claimHandle ? `/signup?handle=${normalizeUsername(claimHandle)}` : '/signup')}
-                  className="btn btn-brand ios-btn"
+                  className="btn btn-brand ios-btn claim-submit-btn"
                   style={{
                     padding: '12px 20px',
                     minHeight: '48px',

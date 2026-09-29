@@ -95,11 +95,14 @@ export const GridTemplate = ({ data }) => {
 
       {/* Bento Grid Content */}
       <main className="container" style={{ maxWidth: '1100px', padding: '40px 20px 60px 20px', flexGrow: 1 }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(12, 1fr)',
-          gap: '20px'
-        }}>
+        <div 
+          className="bento-grid-wrapper"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(12, 1fr)',
+            gap: '20px'
+          }}
+        >
           
           {/* Box 1: Profile & Headline (8 or 12 cols) */}
           <div 
@@ -371,7 +374,7 @@ export const GridTemplate = ({ data }) => {
 
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
                 gap: '22px'
               }}>
                 {projects.map((proj, i) => (
