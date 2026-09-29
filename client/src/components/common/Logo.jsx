@@ -14,7 +14,7 @@ export const Logo = ({
   withLink = true 
 }) => {
   const isMain = variant === 'main';
-  const src = '/builtd.png';
+  const src = '/built.png';
   const altText = 'BUILTD';
 
   // Default optimal heights ensuring 0 distortion and native aspect ratio

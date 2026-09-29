@@ -40,7 +40,7 @@ export const PortfolioFooter = ({ theme = {}, profileName = '' }) => {
           onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
         >
           <img 
-            src="/builtd.png" 
+            src="/built.png" 
             alt="BUILTD" 
             style={{ 
               height: '24px', 

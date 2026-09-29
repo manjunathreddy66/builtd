@@ -105,7 +105,7 @@ export const Home = () => {
               marginBottom: '20px',
               boxShadow: 'var(--shadow-sm)'
             }}>
-              <img src="/builtd.png" alt="BUILTD" style={{ height: '14px', verticalAlign: 'middle' }} />
+              <img src="/built.png" alt="BUILTD" style={{ height: '14px', verticalAlign: 'middle' }} />
               Student Digital Identity Platform
             </div>
 

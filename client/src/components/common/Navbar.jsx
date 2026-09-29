@@ -54,7 +54,7 @@ export const Navbar = () => {
             onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
             <img 
-              src="/builtd.png" 
+              src="/built.png" 
               alt="BUILTD" 
               style={{ 
                 height: '36px', 
