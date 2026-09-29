@@ -6,27 +6,17 @@ import {
   CheckCircle2,
   Globe,
   Search,
-  Smartphone,
-  Monitor,
   QrCode,
   Copy,
   Check,
-  Sparkles,
   Folder,
-  ExternalLink,
-  Layers,
-  Terminal,
-  Zap,
-  Share2,
-  ChevronRight
+  Share2
 } from 'lucide-react';
-import { INITIAL_STUDENT_PORTFOLIOS } from '../services/initialData';
 import { 
   checkUsernameAvailability, 
   normalizeUsername, 
   getAllStoredPortfolios 
 } from '../services/portfolioService';
-import { TemplateRenderer, TEMPLATE_OPTIONS } from '../templates/TemplateRenderer';
 
 export const Home = () => {
   const navigate = useNavigate();
@@ -39,21 +29,12 @@ export const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchError, setSearchError] = useState('');
 
-  // 3. Interactive Sandbox State
-  const [activeTemplate, setActiveTemplate] = useState('editorial');
-  const [activeStudentKey, setActiveStudentKey] = useState('arjun');
-  const [previewDevice, setPreviewDevice] = useState('desktop');
-
-  // 4. QR Code & Tool State
+  // 3. QR Code & Tool State
   const [qrHandle, setQrHandle] = useState('tony');
   const [copiedLink, setCopiedLink] = useState(false);
   const [showFolderModal, setShowFolderModal] = useState(false);
 
-  // 5. Category Filter for Student Showcase
-  const [activeFilter, setActiveFilter] = useState('all');
-
   const allPortfolios = getAllStoredPortfolios();
-  const sampleStudents = Object.values(allPortfolios).slice(0, 6);
 
   // Realtime Handle Checker with Debounce
   useEffect(() => {
@@ -98,26 +79,6 @@ export const Home = () => {
     setTimeout(() => setCopiedLink(false), 2200);
   };
 
-  // Generate preview data by merging active student profile with selected template
-  const currentPreviewStudent = allPortfolios[activeStudentKey] || INITIAL_STUDENT_PORTFOLIOS.arjun;
-  const simulatedPortfolioData = {
-    ...currentPreviewStudent,
-    settings: {
-      ...currentPreviewStudent.settings,
-      template: activeTemplate
-    }
-  };
-
-  // Filter students
-  const filteredStudents = sampleStudents.filter(student => {
-    if (activeFilter === 'all') return true;
-    const skills = (student.skills || []).map(s => s.toLowerCase());
-    if (activeFilter === 'ai') return skills.some(s => s.includes('python') || s.includes('ai') || s.includes('pytorch'));
-    if (activeFilter === 'web') return skills.some(s => s.includes('react') || s.includes('node') || s.includes('javascript'));
-    if (activeFilter === 'systems') return skills.some(s => s.includes('c++') || s.includes('docker') || s.includes('go') || s.includes('linux'));
-    return true;
-  });
-
   return (
     <div style={{ backgroundColor: 'var(--bg-main)', color: 'var(--text-primary)', minHeight: '100vh' }}>
       
@@ -125,7 +86,7 @@ export const Home = () => {
           HERO: COMPACT, PUNCHY, HIGH-FUNCTIONALITY
           ============================================================ */}
       <section style={{
-        padding: '50px 0 60px 0',
+        padding: '60px 0 70px 0',
         borderBottom: '1px solid var(--border-default)',
         background: 'linear-gradient(180deg, #FFFFFF 0%, var(--bg-main) 100%)'
       }}>
@@ -163,7 +124,7 @@ export const Home = () => {
               Claim your link. Launch your portfolio.
             </h1>
 
-            {/* Subtitle - Punchy & Brief */}
+            {/* Subtitle */}
             <p style={{
               fontSize: 'clamp(1rem, 2vw, 1.2rem)',
               color: 'var(--text-secondary)',
@@ -317,192 +278,10 @@ export const Home = () => {
       </section>
 
       {/* ============================================================
-          FUNCTION 2: INTERACTIVE LIVE SANDBOX & TEMPLATE PREVIEWER
+          FUNCTION 2: STUDENT TOOLS & UTILITIES BAR
           ============================================================ */}
       <section style={{
-        padding: '50px 0',
-        backgroundColor: 'var(--bg-card)',
-        borderBottom: '1px solid var(--border-default)'
-      }}>
-        <div className="container">
-          
-          {/* Section Header */}
-          <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '16px',
-            marginBottom: '24px'
-          }}>
-            <div>
-              <div className="section-tag">Interactive Sandbox</div>
-              <h2 style={{ fontSize: 'clamp(1.5rem, 3.2vw, 2.1rem)', fontWeight: 800, letterSpacing: '-0.02em' }}>
-                Test templates live.
-              </h2>
-            </div>
-
-            {/* Device Switcher (Desktop vs Mobile View Simulation) */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              backgroundColor: 'var(--bg-main)',
-              padding: '4px',
-              borderRadius: 'var(--radius-sm)',
-              border: '1px solid var(--border-default)',
-              gap: '4px'
-            }}>
-              <button
-                type="button"
-                onClick={() => setPreviewDevice('desktop')}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '6px 14px',
-                  borderRadius: '4px',
-                  fontSize: '0.8125rem',
-                  fontWeight: 600,
-                  backgroundColor: previewDevice === 'desktop' ? 'var(--bg-card)' : 'transparent',
-                  color: previewDevice === 'desktop' ? 'var(--text-primary)' : 'var(--text-muted)',
-                  boxShadow: previewDevice === 'desktop' ? 'var(--shadow-sm)' : 'none'
-                }}
-              >
-                <Monitor size={15} /> Desktop
-              </button>
-              <button
-                type="button"
-                onClick={() => setPreviewDevice('mobile')}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '6px 14px',
-                  borderRadius: '4px',
-                  fontSize: '0.8125rem',
-                  fontWeight: 600,
-                  backgroundColor: previewDevice === 'mobile' ? 'var(--bg-card)' : 'transparent',
-                  color: previewDevice === 'mobile' ? 'var(--brand-orange)' : 'var(--text-muted)',
-                  boxShadow: previewDevice === 'mobile' ? 'var(--shadow-sm)' : 'none'
-                }}
-              >
-                <Smartphone size={15} /> Mobile View
-              </button>
-            </div>
-          </div>
-
-          {/* Interactive Controls Bar: Templates & Sample Profiles */}
-          <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '12px',
-            padding: '14px 18px',
-            backgroundColor: 'var(--bg-main)',
-            borderRadius: 'var(--radius-sm)',
-            border: '1px solid var(--border-default)',
-            marginBottom: '24px'
-          }}>
-            {/* Template Selector */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                Template:
-              </span>
-              {TEMPLATE_OPTIONS.map(tpl => (
-                <button
-                  key={tpl.id}
-                  onClick={() => setActiveTemplate(tpl.id)}
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: '4px',
-                    fontSize: '0.8125rem',
-                    fontWeight: 600,
-                    border: '1px solid',
-                    borderColor: activeTemplate === tpl.id ? 'var(--brand-orange)' : 'var(--border-default)',
-                    backgroundColor: activeTemplate === tpl.id ? 'var(--brand-orange-light)' : 'var(--bg-card)',
-                    color: activeTemplate === tpl.id ? 'var(--brand-orange)' : 'var(--text-primary)',
-                    transition: 'all 0.15s ease'
-                  }}
-                >
-                  {tpl.name.replace(/^\d+\s*—\s*/, '')}
-                </button>
-              ))}
-            </div>
-
-            {/* Profile Selector */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                Sample Student:
-              </span>
-              {[
-                { id: 'arjun', label: 'Arjun (Full Stack)' },
-                { id: 'priya', label: 'Priya (AI & ML)' },
-                { id: 'rahul', label: 'Rahul (Systems)' }
-              ].map(student => (
-                <button
-                  key={student.id}
-                  onClick={() => setActiveStudentKey(student.id)}
-                  style={{
-                    padding: '4px 10px',
-                    borderRadius: '4px',
-                    fontSize: '0.75rem',
-                    fontWeight: 600,
-                    backgroundColor: activeStudentKey === student.id ? 'var(--text-primary)' : 'var(--bg-card)',
-                    color: activeStudentKey === student.id ? 'var(--text-inverse)' : 'var(--text-secondary)',
-                    border: '1px solid var(--border-default)'
-                  }}
-                >
-                  {student.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Sandbox Live View Frame */}
-          <div style={{
-            border: '1px solid var(--border-default)',
-            borderRadius: 'var(--radius-md)',
-            backgroundColor: 'var(--bg-main)',
-            padding: previewDevice === 'mobile' ? '28px 12px' : '0',
-            overflow: 'hidden',
-            boxShadow: 'var(--shadow-sm)'
-          }}>
-            <TemplateRenderer 
-              data={simulatedPortfolioData} 
-              device={previewDevice} 
-              isPreview={true} 
-            />
-          </div>
-
-          {/* Action beneath preview */}
-          <div style={{
-            marginTop: '20px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '12px',
-            fontSize: '0.875rem'
-          }}>
-            <span style={{ color: 'var(--text-secondary)' }}>
-              Viewing preview of <strong style={{ color: 'var(--text-primary)' }}>/{activeStudentKey}</strong> with <span style={{ textTransform: 'capitalize' }}>{activeTemplate}</span> layout.
-            </span>
-            <Link
-              to={`/signup?handle=${activeStudentKey}`}
-              className="btn btn-brand btn-sm"
-            >
-              Use This Design For My Portfolio →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================
-          FUNCTION 3: STUDENT TOOLS & UTILITIES BAR
-          ============================================================ */}
-      <section style={{
-        padding: '50px 0',
+        padding: '60px 0',
         backgroundColor: 'var(--bg-main)',
         borderBottom: '1px solid var(--border-default)'
       }}>
@@ -620,133 +399,11 @@ export const Home = () => {
       </section>
 
       {/* ============================================================
-          FUNCTION 4: STREAMLINED STUDENT PORTFOLIO DIRECTORY
-          ============================================================ */}
-      <section style={{
-        padding: '50px 0 60px 0',
-        backgroundColor: 'var(--bg-card)',
-        borderBottom: '1px solid var(--border-default)'
-      }}>
-        <div className="container">
-          
-          <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            gap: '16px',
-            marginBottom: '32px'
-          }}>
-            <div>
-              <div className="section-tag">Live Showcases</div>
-              <h2 style={{ fontSize: 'clamp(1.5rem, 3.2vw, 2.1rem)', fontWeight: 800, letterSpacing: '-0.02em' }}>
-                Real student portfolios.
-              </h2>
-            </div>
-
-            {/* Filter Chips */}
-            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-              {[
-                { id: 'all', label: 'All' },
-                { id: 'web', label: 'Full-Stack' },
-                { id: 'ai', label: 'AI & Data' },
-                { id: 'systems', label: 'Systems & DevOps' }
-              ].map(f => (
-                <button
-                  key={f.id}
-                  onClick={() => setActiveFilter(f.id)}
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: '20px',
-                    fontSize: '0.8125rem',
-                    fontWeight: 600,
-                    border: '1px solid',
-                    borderColor: activeFilter === f.id ? 'var(--brand-orange)' : 'var(--border-default)',
-                    backgroundColor: activeFilter === f.id ? 'var(--brand-orange-light)' : 'var(--bg-main)',
-                    color: activeFilter === f.id ? 'var(--brand-orange)' : 'var(--text-secondary)'
-                  }}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Student Cards Grid */}
-          <div className="auto-grid" style={{ gap: '20px' }}>
-            {filteredStudents.map((student) => (
-              <div
-                key={student.username}
-                className="card card-hover"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  padding: '22px'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px' }}>
-                  <img
-                    src={student.profile.profileImage}
-                    alt={student.profile.name}
-                    style={{
-                      width: '52px',
-                      height: '52px',
-                      borderRadius: '50%',
-                      objectFit: 'cover',
-                      border: '2px solid var(--border-default)',
-                      flexShrink: 0
-                    }}
-                  />
-                  <div style={{ overflow: 'hidden' }}>
-                    <h3 style={{ fontSize: '1.05rem', fontWeight: 700, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                      {student.profile.name}
-                    </h3>
-                    <p style={{ fontSize: '0.75rem', color: 'var(--brand-orange)', fontWeight: 600, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                      {student.profile.headline}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Badges */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '18px', flexGrow: 1 }}>
-                  {(student.skills || []).slice(0, 4).map((sk, idx) => (
-                    <span
-                      key={idx}
-                      style={{
-                        fontSize: '0.72rem',
-                        padding: '2px 8px',
-                        backgroundColor: 'var(--bg-main)',
-                        border: '1px solid var(--border-default)',
-                        borderRadius: '4px',
-                        color: 'var(--text-secondary)'
-                      }}
-                    >
-                      {sk}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Direct Action Link */}
-                <Link
-                  to={`/${student.username}`}
-                  className="btn btn-secondary btn-sm"
-                  style={{ width: '100%', justifyContent: 'center' }}
-                >
-                  View /{student.username} <ExternalLink size={14} />
-                </Link>
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
-      {/* ============================================================
           CALL TO ACTION (CLEAN & DIRECT)
           ============================================================ */}
       <section style={{
-        padding: '60px 0',
-        backgroundColor: 'var(--bg-main)',
+        padding: '70px 0',
+        backgroundColor: 'var(--bg-card)',
         textAlign: 'center'
       }}>
         <div className="container-narrow">
@@ -755,7 +412,7 @@ export const Home = () => {
           <h2 style={{
             fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
             fontWeight: 800,
-            letterSpacing: '-0.025em',
+            letterSpacing: '-0.02em',
             margin: '18px 0 10px 0'
           }}>
             Ready to claim your digital identity?
