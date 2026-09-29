@@ -1,6 +1,6 @@
 import React from 'react';
 import { getThemeStyles } from './templateUtils';
-import { Logo } from '../components/common/Logo';
+import { PortfolioFooter } from '../components/common/PortfolioFooter';
 import { ContactButtons } from '../components/common/ContactButtons';
 import { 
   Briefcase, 
@@ -433,19 +433,7 @@ export const ProfessionalTemplate = ({ data }) => {
       </div>
 
       {/* BUILTD Platform Footer */}
-      <footer style={{
-        borderTop: `1px solid ${theme.borderDefault}`,
-        backgroundColor: theme.bgCard,
-        padding: '24px 0',
-        textAlign: 'center'
-      }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-          <Logo variant="compact" height={20} to="/" />
-          <span style={{ fontSize: '0.8125rem', color: theme.textMuted }}>
-            Built with <img src="/built.png" alt="BUILTD" style={{ height: '16px', verticalAlign: 'middle', display: 'inline-block', margin: '0 4px' }} /> — Build your digital identity.
-          </span>
-        </div>
-      </footer>
+      <PortfolioFooter theme={theme} profileName={profile.name} />
     </div>
   );
 };

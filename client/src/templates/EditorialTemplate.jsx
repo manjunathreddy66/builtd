@@ -1,6 +1,6 @@
 import React from 'react';
 import { getThemeStyles } from './templateUtils';
-import { Logo } from '../components/common/Logo';
+import { PortfolioFooter } from '../components/common/PortfolioFooter';
 import { ContactButtons } from '../components/common/ContactButtons';
 import { 
   Mail, 
@@ -663,19 +663,7 @@ export const EditorialTemplate = ({ data }) => {
       </div>
 
       {/* BUILTD Platform Brand Footer */}
-      <footer style={{
-        borderTop: `2px solid ${theme.borderDefault}`,
-        backgroundColor: theme.bgCard,
-        padding: '24px 0',
-        textAlign: 'center'
-      }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-          <Logo variant="compact" height={22} to="/" />
-          <span style={{ fontSize: '0.8125rem', fontFamily: 'var(--font-mono)', color: theme.textMuted }}>
-            PORTFOLIO POWERED BY <img src="/built.png" alt="BUILTD" style={{ height: '16px', verticalAlign: 'middle', display: 'inline-block', margin: '0 4px' }} /> — BUILD YOUR DIGITAL IDENTITY.
-          </span>
-        </div>
-      </footer>
+      <PortfolioFooter theme={theme} profileName={profile.name} />
     </div>
   );
 };

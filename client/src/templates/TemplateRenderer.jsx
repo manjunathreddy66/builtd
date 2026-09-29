@@ -4,6 +4,7 @@ import EditorialTemplate from './EditorialTemplate';
 import GridTemplate from './GridTemplate';
 import CreativeTemplate from './CreativeTemplate';
 import ProfessionalTemplate from './ProfessionalTemplate';
+import { PortfolioFloatingBar } from '../components/common/PortfolioFloatingBar';
 
 export const TEMPLATE_OPTIONS = [
   {
@@ -59,7 +60,12 @@ export const TemplateRenderer = ({ data, device = 'desktop', isPreview = false }
   };
 
   if (!isPreview) {
-    return renderTemplate();
+    return (
+      <div className="portfolio-wrapper" style={{ position: 'relative' }}>
+        {renderTemplate()}
+        <PortfolioFloatingBar data={data} />
+      </div>
+    );
   }
 
   // Preview frame wrapper for Desktop / Tablet / Mobile preview simulation

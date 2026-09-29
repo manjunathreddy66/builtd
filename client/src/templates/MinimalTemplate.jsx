@@ -1,57 +1,89 @@
 import React from 'react';
 import { getThemeStyles } from './templateUtils';
-import { Logo } from '../components/common/Logo';
+import { PortfolioFooter } from '../components/common/PortfolioFooter';
 import { ContactButtons } from '../components/common/ContactButtons';
 import { 
   Mail, 
   ExternalLink, 
-  Code, 
-  FileText, 
   MapPin, 
-  GraduationCap, 
-  Briefcase, 
-  Award 
+  FileText, 
+  Sparkles,
+  ArrowUpRight,
+  GraduationCap,
+  Briefcase,
+  Award
 } from 'lucide-react';
 import { Github } from '../components/common/Icons';
 
 export const MinimalTemplate = ({ data }) => {
-  const { profile = {}, education = [], skills = [], projects = [], experience = [], achievements = [], certifications = [], links = {}, resumeUrl = '', settings = {} } = data;
-  const theme = getThemeStyles(settings);
+  const { 
+    profile = {}, 
+    education = [], 
+    skills = [], 
+    projects = [], 
+    experience = [], 
+    achievements = [], 
+    certifications = [], 
+    links = {}, 
+    resumeUrl = '', 
+    settings = {} 
+  } = data;
 
+  const theme = getThemeStyles(settings);
   const avatarShape = settings.avatarShape || 'circle';
 
   return (
-    <div style={theme.rootStyle}>
-      {/* Portfolio Header Bar */}
+    <div style={{ ...theme.rootStyle, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      
+      {/* Frosted Glass Top Bar */}
       <header style={{
-        borderBottom: `1px solid ${theme.borderLight}`,
-        padding: '20px 0',
-        backgroundColor: theme.bgCard
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        backgroundColor: 'rgba(255, 255, 255, 0.82)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        borderBottom: `1px solid ${theme.borderDefault}`,
+        padding: '14px 20px'
       }}>
         <div className="container" style={{
+          maxWidth: '860px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '12px'
         }}>
-          <div style={{ fontWeight: 700, fontSize: '1.125rem', letterSpacing: '-0.02em' }}>
-            {profile.name || 'Student Portfolio'}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: '#10B981',
+              boxShadow: '0 0 0 3px rgba(16, 185, 129, 0.25)'
+            }} />
+            <span style={{ fontWeight: 800, fontSize: '0.9375rem', letterSpacing: '-0.02em', color: theme.textPrimary }}>
+              {profile.name || 'Portfolio'}
+            </span>
           </div>
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
+
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <ContactButtons links={links} theme={theme} variant="nav" />
             {resumeUrl && (
-              <a 
-                href={resumeUrl} 
-                target="_blank" 
+              <a
+                href={resumeUrl}
+                target="_blank"
                 rel="noreferrer"
+                className="ios-btn"
                 style={{
                   fontSize: '0.8125rem',
-                  fontWeight: 600,
+                  fontWeight: 700,
                   color: theme.accent,
-                  border: `1px solid ${theme.accent}`,
-                  padding: '6px 14px',
-                  borderRadius: '4px'
+                  border: `1.5px solid ${theme.accent}`,
+                  backgroundColor: theme.accentSubtle,
+                  padding: '5px 12px',
+                  borderRadius: '999px',
+                  textDecoration: 'none'
                 }}
               >
                 Resume
@@ -62,30 +94,51 @@ export const MinimalTemplate = ({ data }) => {
       </header>
 
       {/* Main Content Area */}
-      <main className="container" style={{ maxWidth: '840px', padding: '50px 20px 80px 20px' }}>
+      <main className="container" style={{ maxWidth: '860px', padding: '50px 20px 80px 20px', flexGrow: 1 }}>
+        
         {/* Hero Section */}
-        <section style={{ marginBottom: '60px' }}>
+        <section className="ios-reveal" style={{ marginBottom: '64px' }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap-reverse', gap: '24px' }}>
-            <div>
-              <h1 style={{
-                fontSize: 'clamp(2.4rem, 5vw, 3.8rem)',
-                fontWeight: 800,
-                letterSpacing: '-0.04em',
-                lineHeight: 1.1,
+            <div style={{ flexGrow: 1, maxWidth: '640px' }}>
+              
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '4px 10px',
+                borderRadius: '999px',
+                backgroundColor: theme.accentSubtle,
+                color: theme.accent,
+                fontSize: '0.78125rem',
+                fontWeight: 700,
                 marginBottom: '16px',
+                border: `1px solid ${theme.borderLight}`
+              }}>
+                <Sparkles size={13} /> Available for Opportunities
+              </div>
+
+              <h1 style={{
+                fontSize: 'clamp(2.4rem, 5.5vw, 3.8rem)',
+                fontWeight: 800,
+                letterSpacing: '-0.035em',
+                lineHeight: 1.1,
+                marginBottom: '14px',
+                color: theme.textPrimary,
                 ...theme.invertedTitleStyle
               }}>
                 {profile.name}
               </h1>
+
               <p style={{
                 fontSize: '1.25rem',
                 color: theme.accent,
                 fontWeight: 600,
-                letterSpacing: '-0.02em',
-                marginBottom: '18px'
+                letterSpacing: '-0.015em',
+                marginBottom: '16px'
               }}>
                 {profile.headline}
               </p>
+
               {profile.location && (
                 <div style={{
                   display: 'flex',
@@ -93,11 +146,22 @@ export const MinimalTemplate = ({ data }) => {
                   gap: '6px',
                   color: theme.textMuted,
                   fontSize: '0.875rem',
-                  marginBottom: '24px'
+                  marginBottom: '20px'
                 }}>
-                  <MapPin size={15} />
+                  <MapPin size={15} color={theme.accent} />
                   <span>{profile.location}</span>
                 </div>
+              )}
+
+              {profile.bio && (
+                <p style={{
+                  fontSize: '1.05rem',
+                  color: theme.textSecondary,
+                  lineHeight: 1.7,
+                  marginTop: '12px'
+                }}>
+                  {profile.bio}
+                </p>
               )}
             </div>
 
@@ -105,94 +169,64 @@ export const MinimalTemplate = ({ data }) => {
               <img
                 src={profile.profileImage}
                 alt={profile.name}
+                className="ios-card"
                 style={{
-                  width: '110px',
-                  height: '110px',
+                  width: '120px',
+                  height: '120px',
                   objectFit: 'cover',
-                  borderRadius: avatarShape === 'circle' ? '50%' : '8px',
-                  border: `1px solid ${theme.borderDefault}`,
+                  borderRadius: avatarShape === 'circle' ? '50%' : '20px',
+                  border: `2px solid ${theme.borderDefault}`,
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.06)',
                   flexShrink: 0
                 }}
               />
             )}
           </div>
 
-          {profile.bio && (
-            <p style={{
-              fontSize: '1.125rem',
-              color: theme.textSecondary,
-              maxWidth: '680px',
-              marginTop: '16px',
-              lineHeight: 1.7
-            }}>
-              {profile.bio}
-            </p>
-          )}
-
-          <div style={{ display: 'flex', gap: '14px', marginTop: '30px' }}>
-            {projects.length > 0 && (
-              <a 
-                href="#projects" 
-                style={{
-                  backgroundColor: theme.textPrimary,
-                  color: theme.bgMain,
-                  padding: '10px 20px',
-                  borderRadius: '4px',
-                  fontWeight: 600,
-                  fontSize: '0.875rem'
-                }}
-              >
-                View Projects ↓
-              </a>
-            )}
-            {resumeUrl && (
-              <a 
-                href={resumeUrl}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  border: `1px solid ${theme.borderDefault}`,
-                  color: theme.textPrimary,
-                  padding: '10px 20px',
-                  borderRadius: '4px',
-                  fontWeight: 600,
-                  fontSize: '0.875rem',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
-              >
-                <FileText size={15} /> Resume
-              </a>
-            )}
+          <div style={{ marginTop: '28px' }}>
+            <ContactButtons links={links} theme={theme} variant="hero" />
           </div>
-
-          {/* Hero Contact Buttons with App Icons */}
-          <ContactButtons links={links} theme={theme} variant="hero" style={{ marginTop: '22px' }} />
         </section>
 
         {/* Projects Section */}
         {projects.length > 0 && (
-          <section id="projects" style={{ marginBottom: '70px' }}>
-            <h2 style={{
-              fontSize: '0.8125rem',
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              color: theme.textMuted,
-              fontWeight: 700,
-              marginBottom: '28px',
-              borderBottom: `1px solid ${theme.borderLight}`,
-              paddingBottom: '10px'
+          <section id="projects" className="ios-reveal ios-reveal-delay-1" style={{ marginBottom: '64px' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderBottom: `1px solid ${theme.borderDefault}`,
+              paddingBottom: '12px',
+              marginBottom: '28px'
             }}>
-              Projects ({projects.length})
-            </h2>
+              <h2 style={{
+                fontSize: '1.15rem',
+                fontWeight: 800,
+                letterSpacing: '-0.02em',
+                color: theme.textPrimary
+              }}>
+                Featured Work & Projects
+              </h2>
+              <span style={{ fontSize: '0.8125rem', color: theme.textMuted, fontWeight: 600 }}>
+                {projects.length} builds
+              </span>
+            </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
               {projects.map((proj, idx) => (
-                <article key={proj.id || idx} style={{
-                  paddingBottom: '30px',
-                  borderBottom: idx !== projects.length - 1 ? `1px dashed ${theme.borderLight}` : 'none'
-                }}>
+                <article 
+                  key={proj.id || idx} 
+                  className="ios-card"
+                  style={{
+                    backgroundColor: theme.bgCard,
+                    border: `1px solid ${theme.borderDefault}`,
+                    borderRadius: '20px',
+                    padding: '26px',
+                    boxShadow: '0 4px 18px rgba(0, 0, 0, 0.02)',
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}
+                >
                   {proj.image && (
                     <img 
                       src={proj.image} 
@@ -201,50 +235,59 @@ export const MinimalTemplate = ({ data }) => {
                         width: '100%',
                         height: '240px',
                         objectFit: 'cover',
-                        borderRadius: '6px',
+                        borderRadius: '12px',
                         marginBottom: '18px',
                         border: `1px solid ${theme.borderLight}`
                       }}
                     />
                   )}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '16px' }}>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.02em', color: theme.textPrimary }}>
                       {proj.name}
                     </h3>
-                    <div style={{ display: 'flex', gap: '12px', flexShrink: 0 }}>
-                      {proj.githubUrl && (
-                        <a href={proj.githubUrl} target="_blank" rel="noreferrer" title="Source Code" style={{ color: theme.textSecondary }}>
-                          <Github size={16} />
+                    
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                      {proj.liveUrl && (
+                        <a 
+                          href={proj.liveUrl} 
+                          target="_blank" 
+                          rel="noreferrer"
+                          className="btn btn-brand btn-sm ios-btn"
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}
+                        >
+                          Live Demo <ExternalLink size={13} />
                         </a>
                       )}
-                      {proj.liveUrl && (
-                        <a href={proj.liveUrl} target="_blank" rel="noreferrer" title="Live Demo" style={{ color: theme.accent }}>
-                          <ExternalLink size={16} />
+                      {proj.githubUrl && (
+                        <a 
+                          href={proj.githubUrl} 
+                          target="_blank" 
+                          rel="noreferrer"
+                          className="btn btn-secondary btn-sm ios-btn"
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}
+                        >
+                          <Github size={13} /> Code
                         </a>
                       )}
                     </div>
                   </div>
 
-                  <p style={{ color: theme.textSecondary, fontSize: '0.9375rem', margin: '10px 0 14px 0' }}>
+                  <p style={{ color: theme.textSecondary, fontSize: '0.9375rem', lineHeight: 1.6, margin: '12px 0 16px 0' }}>
                     {proj.description}
                   </p>
 
-                  {proj.learned && (
-                    <p style={{ fontSize: '0.8125rem', color: theme.textMuted, fontStyle: 'italic', marginBottom: '12px' }}>
-                      Key takeaway: {proj.learned}
-                    </p>
-                  )}
-
                   {proj.technologies && proj.technologies.length > 0 && (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                       {proj.technologies.map((t, i) => (
                         <span key={i} style={{
                           fontSize: '0.75rem',
-                          fontFamily: 'var(--font-mono)',
+                          fontWeight: 600,
                           backgroundColor: theme.bgSubtle,
-                          padding: '3px 8px',
-                          borderRadius: '3px',
-                          color: theme.textSecondary
+                          padding: '3px 10px',
+                          borderRadius: '6px',
+                          color: theme.textSecondary,
+                          border: `1px solid ${theme.borderLight}`
                         }}>
                           {t}
                         </span>
@@ -259,28 +302,29 @@ export const MinimalTemplate = ({ data }) => {
 
         {/* Skills Section */}
         {skills.length > 0 && (
-          <section style={{ marginBottom: '70px' }}>
+          <section className="ios-reveal ios-reveal-delay-2" style={{ marginBottom: '64px' }}>
             <h2 style={{
-              fontSize: '0.8125rem',
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              color: theme.textMuted,
-              fontWeight: 700,
-              marginBottom: '20px',
-              borderBottom: `1px solid ${theme.borderLight}`,
-              paddingBottom: '10px'
+              fontSize: '1.15rem',
+              fontWeight: 800,
+              letterSpacing: '-0.02em',
+              color: theme.textPrimary,
+              borderBottom: `1px solid ${theme.borderDefault}`,
+              paddingBottom: '12px',
+              marginBottom: '20px'
             }}>
               Skills & Technologies
             </h2>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {skills.map((skill, i) => (
-                <span key={i} style={{
-                  fontSize: '0.875rem',
-                  padding: '6px 14px',
-                  borderRadius: '4px',
+                <span key={i} className="ios-btn" style={{
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  padding: '7px 14px',
+                  borderRadius: '10px',
                   backgroundColor: theme.bgCard,
+                  color: theme.textPrimary,
                   border: `1px solid ${theme.borderDefault}`,
-                  fontWeight: 500
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.02)'
                 }}>
                   {skill}
                 </span>
@@ -291,71 +335,74 @@ export const MinimalTemplate = ({ data }) => {
 
         {/* Education Section */}
         {education.length > 0 && (
-          <section style={{ marginBottom: '70px' }}>
+          <section className="ios-reveal ios-reveal-delay-2" style={{ marginBottom: '64px' }}>
             <h2 style={{
-              fontSize: '0.8125rem',
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              color: theme.textMuted,
-              fontWeight: 700,
-              marginBottom: '24px',
-              borderBottom: `1px solid ${theme.borderLight}`,
-              paddingBottom: '10px'
+              fontSize: '1.15rem',
+              fontWeight: 800,
+              letterSpacing: '-0.02em',
+              color: theme.textPrimary,
+              borderBottom: `1px solid ${theme.borderDefault}`,
+              paddingBottom: '12px',
+              marginBottom: '24px'
             }}>
               Education
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {education.map((edu, i) => (
-                <div key={edu.id || i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div>
-                    <h3 style={{ fontSize: '1.0625rem', fontWeight: 700 }}>
-                      {edu.degree} {edu.branch && `in ${edu.branch}`}
-                    </h3>
-                    <p style={{ color: theme.textSecondary, fontSize: '0.9375rem' }}>
-                      {edu.college} {edu.university && `(${edu.university})`}
-                    </p>
-                    {edu.cgpa && (
-                      <p style={{ fontSize: '0.8125rem', color: theme.accent, fontWeight: 600 }}>
-                        Score: {edu.cgpa}
-                      </p>
-                    )}
-                  </div>
-                  <div style={{ fontSize: '0.8125rem', color: theme.textMuted, whiteSpace: 'nowrap' }}>
+                <div key={edu.id || i} style={{ borderLeft: `2.5px solid ${theme.accent}`, paddingLeft: '16px' }}>
+                  <div style={{ fontSize: '0.78125rem', color: theme.textMuted, fontWeight: 600 }}>
                     {edu.startYear} — {edu.endYear || 'Present'}
                   </div>
+                  <div style={{ fontWeight: 800, fontSize: '1rem', color: theme.textPrimary, marginTop: '2px' }}>
+                    {edu.degree} in {edu.branch}
+                  </div>
+                  <div style={{ color: theme.textSecondary, fontSize: '0.875rem', marginTop: '2px' }}>
+                    {edu.college}
+                  </div>
+                  {edu.cgpa && (
+                    <div style={{
+                      display: 'inline-block',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      color: theme.accent,
+                      backgroundColor: theme.accentSubtle,
+                      padding: '2px 8px',
+                      borderRadius: '6px',
+                      marginTop: '6px'
+                    }}>
+                      CGPA: {edu.cgpa}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
           </section>
         )}
 
-        {/* Experience Section (Only if present) */}
+        {/* Experience Section */}
         {experience.length > 0 && (
-          <section style={{ marginBottom: '70px' }}>
+          <section className="ios-reveal ios-reveal-delay-3" style={{ marginBottom: '64px' }}>
             <h2 style={{
-              fontSize: '0.8125rem',
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              color: theme.textMuted,
-              fontWeight: 700,
-              marginBottom: '24px',
-              borderBottom: `1px solid ${theme.borderLight}`,
-              paddingBottom: '10px'
+              fontSize: '1.15rem',
+              fontWeight: 800,
+              letterSpacing: '-0.02em',
+              color: theme.textPrimary,
+              borderBottom: `1px solid ${theme.borderDefault}`,
+              paddingBottom: '12px',
+              marginBottom: '24px'
             }}>
               Experience
             </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
               {experience.map((exp, i) => (
-                <div key={exp.id || i}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                    <h3 style={{ fontSize: '1.0625rem', fontWeight: 700 }}>
-                      {exp.role} <span style={{ fontWeight: 400, color: theme.textMuted }}>at {exp.organization}</span>
-                    </h3>
-                    <span style={{ fontSize: '0.8125rem', color: theme.textMuted }}>
-                      {exp.startDate} — {exp.endDate || 'Present'}
-                    </span>
+                <div key={exp.id || i} style={{ borderLeft: `2.5px solid ${theme.accent}`, paddingLeft: '16px' }}>
+                  <div style={{ fontSize: '0.78125rem', color: theme.textMuted, fontWeight: 600 }}>
+                    {exp.startDate} — {exp.endDate || 'Present'}
                   </div>
-                  <p style={{ color: theme.textSecondary, fontSize: '0.9375rem', marginTop: '6px' }}>
+                  <div style={{ fontWeight: 800, fontSize: '1rem', color: theme.textPrimary, marginTop: '2px' }}>
+                    {exp.role} · <span style={{ fontWeight: 600, color: theme.accent }}>{exp.organization}</span>
+                  </div>
+                  <p style={{ color: theme.textSecondary, fontSize: '0.9rem', marginTop: '6px', lineHeight: 1.6 }}>
                     {exp.description}
                   </p>
                 </div>
@@ -364,74 +411,11 @@ export const MinimalTemplate = ({ data }) => {
           </section>
         )}
 
-        {/* Achievements Section */}
-        {achievements.length > 0 && (
-          <section style={{ marginBottom: '70px' }}>
-            <h2 style={{
-              fontSize: '0.8125rem',
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              color: theme.textMuted,
-              fontWeight: 700,
-              marginBottom: '24px',
-              borderBottom: `1px solid ${theme.borderLight}`,
-              paddingBottom: '10px'
-            }}>
-              Achievements & Honors
-            </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {achievements.map((ach, i) => (
-                <div key={ach.id || i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                  <div>
-                    <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>
-                      {ach.title}
-                    </h3>
-                    <p style={{ color: theme.textSecondary, fontSize: '0.875rem' }}>
-                      {ach.organization} {ach.description && `— ${ach.description}`}
-                    </p>
-                  </div>
-                  <span style={{ fontSize: '0.8125rem', color: theme.textMuted }}>
-                    {ach.year}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Contact Footer */}
-        <section style={{
-          borderTop: `1px solid ${theme.borderLight}`,
-          paddingTop: '50px',
-          marginTop: '60px'
-        }}>
-          <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '8px' }}>
-              Let's connect.
-            </h3>
-            <p style={{ color: theme.textSecondary, fontSize: '0.9375rem' }}>
-              Feel free to reach out directly through any platform below.
-            </p>
-          </div>
-          
-          <ContactButtons links={links} theme={theme} variant="section" />
-        </section>
       </main>
 
-      {/* BUILTD Platform Watermark Footer */}
-      <footer style={{
-        borderTop: `1px solid ${theme.borderLight}`,
-        padding: '24px 0',
-        textAlign: 'center',
-        backgroundColor: theme.bgCard
-      }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-          <Logo variant="compact" height={20} to="/" />
-          <span style={{ fontSize: '0.8125rem', color: theme.textMuted }}>
-            Built with <img src="/built.png" alt="BUILTD" style={{ height: '16px', verticalAlign: 'middle', display: 'inline-block', margin: '0 4px' }} /> — Build your digital identity.
-          </span>
-        </div>
-      </footer>
+      {/* BUILTD Signature Footer */}
+      <PortfolioFooter theme={theme} profileName={profile.name} />
+
     </div>
   );
 };

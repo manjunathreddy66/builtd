@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getPortfolioByUsername, getLocalPortfolioByUsername } from '../services/portfolioService';
 import { TemplateRenderer } from '../templates/TemplateRenderer';
-import { Logo } from '../components/common/Logo';
 import { ArrowLeft, AlertCircle } from 'lucide-react';
 
 export const PublicPortfolio = () => {
@@ -67,7 +66,11 @@ export const PublicPortfolio = () => {
         backgroundColor: 'var(--bg-main)',
         gap: '20px'
       }}>
-        <Logo variant="compact" height={40} withLink={false} />
+        <img 
+          src="/built.png" 
+          alt="BUILTD" 
+          style={{ height: '36px', width: 'auto', filter: 'drop-shadow(0 2px 8px rgba(242, 92, 34, 0.12))' }} 
+        />
         <div style={{
           fontFamily: 'var(--font-mono)',
           fontSize: '0.875rem',
@@ -90,18 +93,24 @@ export const PublicPortfolio = () => {
         backgroundColor: 'var(--bg-main)',
         padding: '30px 20px'
       }}>
-        <div style={{
+        <div className="ios-card ios-reveal" style={{
           width: '100%',
           maxWidth: '460px',
           textAlign: 'center',
           backgroundColor: 'var(--bg-card)',
           border: '1px solid var(--border-default)',
-          borderRadius: 'var(--radius-md)',
+          borderRadius: '24px',
           padding: '48px 32px',
-          boxShadow: 'var(--shadow-sm)'
+          boxShadow: '0 12px 36px rgba(0, 0, 0, 0.04)'
         }}>
-          <div style={{ marginBottom: '20px' }}>
-            <Logo variant="compact" height={36} to="/" />
+          <div style={{ marginBottom: '22px' }}>
+            <Link to="/">
+              <img 
+                src="/built.png" 
+                alt="BUILTD" 
+                style={{ height: '34px', width: 'auto' }} 
+              />
+            </Link>
           </div>
 
           <h1 style={{
@@ -122,8 +131,8 @@ export const PublicPortfolio = () => {
             The portfolio for <strong style={{ color: 'var(--text-primary)' }}>/{username}</strong> doesn't exist or hasn't been published yet.
           </p>
 
-          <Link to="/" className="btn btn-brand" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-            <ArrowLeft size={16} /> Back to <img src="/built.png" alt="BUILTD" style={{ height: '18px', verticalAlign: 'middle' }} />
+          <Link to="/" className="btn btn-brand ios-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            <ArrowLeft size={16} /> Back to <img src="/built.png" alt="BUILTD" style={{ height: '16px', verticalAlign: 'middle' }} />
           </Link>
         </div>
       </div>

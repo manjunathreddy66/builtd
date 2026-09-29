@@ -1,6 +1,6 @@
 import React from 'react';
 import { getThemeStyles } from './templateUtils';
-import { Logo } from '../components/common/Logo';
+import { PortfolioFooter } from '../components/common/PortfolioFooter';
 import { ContactButtons } from '../components/common/ContactButtons';
 import { 
   Mail, 
@@ -11,7 +11,8 @@ import {
   GraduationCap, 
   Briefcase, 
   Award, 
-  Sparkles 
+  Sparkles,
+  ArrowUpRight
 } from 'lucide-react';
 import { Github } from '../components/common/Icons';
 
@@ -33,57 +34,123 @@ export const GridTemplate = ({ data }) => {
   const avatarShape = settings.avatarShape || 'circle';
 
   return (
-    <div style={{ ...theme.rootStyle, padding: '40px 20px 80px 20px' }}>
-      <div className="container" style={{ maxWidth: '1100px' }}>
-        {/* Bento Grid Container */}
+    <div style={{ ...theme.rootStyle, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      
+      {/* Top Identity Header Bar */}
+      <header style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        backgroundColor: 'rgba(255, 255, 255, 0.82)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        borderBottom: `1px solid ${theme.borderDefault}`,
+        padding: '14px 20px'
+      }}>
+        <div className="container" style={{
+          maxWidth: '1100px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '12px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: '#10B981',
+              boxShadow: '0 0 0 3px rgba(16, 185, 129, 0.25)'
+            }} />
+            <span style={{ fontWeight: 800, fontSize: '0.95rem', letterSpacing: '-0.02em', color: theme.textPrimary }}>
+              {profile.name || 'Student Portfolio'}
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <ContactButtons links={links} theme={theme} variant="nav" />
+            {resumeUrl && (
+              <a
+                href={resumeUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="ios-btn"
+                style={{
+                  fontSize: '0.8125rem',
+                  fontWeight: 700,
+                  color: theme.accent,
+                  border: `1.5px solid ${theme.accent}`,
+                  backgroundColor: theme.accentSubtle,
+                  padding: '6px 14px',
+                  borderRadius: '999px',
+                  textDecoration: 'none'
+                }}
+              >
+                Resume
+              </a>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* Bento Grid Content */}
+      <main className="container" style={{ maxWidth: '1100px', padding: '40px 20px 60px 20px', flexGrow: 1 }}>
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(12, 1fr)',
           gap: '20px'
         }}>
-          {/* Box 1: Profile & Headline (8 cols) */}
-          <div style={{
-            gridColumn: profile.profileImage && avatarShape !== 'none' ? 'span 8' : 'span 12',
-            backgroundColor: theme.bgCard,
-            border: `1px solid ${theme.borderDefault}`,
-            borderRadius: '16px',
-            padding: '36px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between'
-          }} className="bento-box-hero">
+          
+          {/* Box 1: Profile & Headline (8 or 12 cols) */}
+          <div 
+            className="bento-box-hero ios-card ios-reveal" 
+            style={{
+              gridColumn: profile.profileImage && avatarShape !== 'none' ? 'span 8' : 'span 12',
+              backgroundColor: theme.bgCard,
+              border: `1px solid ${theme.borderDefault}`,
+              borderRadius: '24px',
+              padding: 'clamp(28px, 5vw, 42px)',
+              boxShadow: '0 8px 30px rgba(0, 0, 0, 0.03)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between'
+            }}
+          >
             <div>
               <div style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '4px 10px',
+                padding: '5px 12px',
                 borderRadius: '999px',
                 backgroundColor: theme.accentSubtle,
                 color: theme.accent,
                 fontSize: '0.8125rem',
-                fontWeight: 600,
-                marginBottom: '18px'
+                fontWeight: 700,
+                marginBottom: '18px',
+                border: `1px solid ${theme.borderLight}`
               }}>
-                <Sparkles size={14} /> Open to Opportunities
+                <Sparkles size={14} /> Available for Opportunities
               </div>
 
               <h1 style={{
-                fontSize: 'clamp(2.2rem, 4.5vw, 3.4rem)',
+                fontSize: 'clamp(2.3rem, 5vw, 3.6rem)',
                 fontWeight: 800,
-                letterSpacing: '-0.03em',
+                letterSpacing: '-0.035em',
                 lineHeight: 1.1,
-                marginBottom: '12px',
+                marginBottom: '14px',
+                color: theme.textPrimary,
                 ...theme.invertedTitleStyle
               }}>
                 {profile.name}
               </h1>
 
               <p style={{
-                fontSize: '1.25rem',
-                color: theme.textSecondary,
-                fontWeight: 500,
-                letterSpacing: '-0.01em',
+                fontSize: 'clamp(1.1rem, 2.5vw, 1.35rem)',
+                color: theme.accent,
+                fontWeight: 600,
+                letterSpacing: '-0.015em',
                 marginBottom: '16px'
               }}>
                 {profile.headline}
@@ -98,7 +165,7 @@ export const GridTemplate = ({ data }) => {
                   fontSize: '0.875rem',
                   marginBottom: '20px'
                 }}>
-                  <MapPin size={15} />
+                  <MapPin size={15} color={theme.accent} />
                   <span>{profile.location}</span>
                 </div>
               )}
@@ -107,64 +174,48 @@ export const GridTemplate = ({ data }) => {
                 <p style={{
                   fontSize: '1rem',
                   color: theme.textSecondary,
-                  lineHeight: 1.6,
-                  maxWidth: '560px'
+                  lineHeight: 1.65,
+                  maxWidth: '580px'
                 }}>
                   {profile.bio}
                 </p>
               )}
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '28px' }}>
-              {resumeUrl && (
-                <a
-                  href={resumeUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{
-                    backgroundColor: theme.accent,
-                    color: '#FFFFFF',
-                    padding: '10px 20px',
-                    borderRadius: '8px',
-                    fontSize: '0.875rem',
-                    fontWeight: 600,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                  }}
-                >
-                  <FileText size={15} /> Resume
-                </a>
-              )}
+            <div style={{ marginTop: '28px' }}>
+              <ContactButtons links={links} theme={theme} variant="hero" />
             </div>
-
-            {/* Hero Contact Buttons with App Icons */}
-            <ContactButtons links={links} theme={theme} variant="hero" style={{ marginTop: '20px' }} />
           </div>
 
           {/* Box 2: Profile Picture (4 cols) */}
           {profile.profileImage && avatarShape !== 'none' && (
-            <div style={{
-              gridColumn: 'span 4',
-              backgroundColor: theme.bgCard,
-              border: `1px solid ${theme.borderDefault}`,
-              borderRadius: '16px',
-              padding: '24px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden'
-            }} className="bento-box-avatar">
+            <div 
+              className="bento-box-avatar ios-card ios-reveal ios-reveal-delay-1" 
+              style={{
+                gridColumn: 'span 4',
+                backgroundColor: theme.bgCard,
+                border: `1px solid ${theme.borderDefault}`,
+                borderRadius: '24px',
+                padding: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.03)',
+                overflow: 'hidden'
+              }}
+            >
               <img
                 src={profile.profileImage}
                 alt={profile.name}
                 style={{
                   width: '100%',
                   height: '100%',
-                  maxHeight: '300px',
+                  minHeight: '260px',
+                  maxHeight: '340px',
                   objectFit: 'cover',
-                  borderRadius: avatarShape === 'circle' ? '50%' : '12px',
-                  border: `2px solid ${theme.borderDefault}`
+                  borderRadius: avatarShape === 'circle' ? '50%' : '18px',
+                  border: `2px solid ${theme.borderDefault}`,
+                  boxShadow: '0 12px 24px rgba(0, 0, 0, 0.06)'
                 }}
               />
             </div>
@@ -172,29 +223,43 @@ export const GridTemplate = ({ data }) => {
 
           {/* Box 3: Skills (6 cols) */}
           {skills.length > 0 && (
-            <div style={{
-              gridColumn: 'span 6',
-              backgroundColor: theme.bgCard,
-              border: `1px solid ${theme.borderDefault}`,
-              borderRadius: '16px',
-              padding: '28px'
-            }} className="bento-box-skills">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                <Code2 size={18} color={theme.accent} />
-                <h3 style={{ fontSize: '1.125rem', fontWeight: 700 }}>
-                  Skills & Tools
+            <div 
+              className="bento-box-skills ios-card ios-reveal ios-reveal-delay-1" 
+              style={{
+                gridColumn: 'span 6',
+                backgroundColor: theme.bgCard,
+                border: `1px solid ${theme.borderDefault}`,
+                borderRadius: '24px',
+                padding: '30px',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.03)'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+                <div style={{
+                  padding: '8px',
+                  borderRadius: '10px',
+                  backgroundColor: theme.accentSubtle,
+                  color: theme.accent,
+                  display: 'flex',
+                  alignItems: 'center'
+                }}>
+                  <Code2 size={18} />
+                </div>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, letterSpacing: '-0.02em', color: theme.textPrimary }}>
+                  Core Tech Stack & Skills
                 </h3>
               </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                 {skills.map((s, i) => (
-                  <span key={i} style={{
-                    fontSize: '0.8125rem',
-                    padding: '6px 12px',
-                    borderRadius: '8px',
+                  <span key={i} className="ios-btn" style={{
+                    fontSize: '0.85rem',
+                    padding: '8px 14px',
+                    borderRadius: '12px',
                     backgroundColor: theme.bgSubtle,
                     color: theme.textPrimary,
-                    border: `1px solid ${theme.borderLight}`,
-                    fontWeight: 500
+                    border: `1px solid ${theme.borderDefault}`,
+                    fontWeight: 600,
+                    boxShadow: '0 2px 6px rgba(0, 0, 0, 0.02)'
                   }}>
                     {s}
                   </span>
@@ -205,37 +270,59 @@ export const GridTemplate = ({ data }) => {
 
           {/* Box 4: Education (6 cols) */}
           {education.length > 0 && (
-            <div style={{
-              gridColumn: skills.length > 0 ? 'span 6' : 'span 12',
-              backgroundColor: theme.bgCard,
-              border: `1px solid ${theme.borderDefault}`,
-              borderRadius: '16px',
-              padding: '28px'
-            }} className="bento-box-edu">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                <GraduationCap size={18} color={theme.accent} />
-                <h3 style={{ fontSize: '1.125rem', fontWeight: 700 }}>
+            <div 
+              className="bento-box-edu ios-card ios-reveal ios-reveal-delay-2" 
+              style={{
+                gridColumn: skills.length > 0 ? 'span 6' : 'span 12',
+                backgroundColor: theme.bgCard,
+                border: `1px solid ${theme.borderDefault}`,
+                borderRadius: '24px',
+                padding: '30px',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.03)'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+                <div style={{
+                  padding: '8px',
+                  borderRadius: '10px',
+                  backgroundColor: theme.accentSubtle,
+                  color: theme.accent,
+                  display: 'flex',
+                  alignItems: 'center'
+                }}>
+                  <GraduationCap size={18} />
+                </div>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, letterSpacing: '-0.02em', color: theme.textPrimary }}>
                   Education
                 </h3>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                 {education.map((edu, i) => (
                   <div key={edu.id || i} style={{
-                    borderLeft: `2px solid ${theme.accent}`,
-                    paddingLeft: '14px'
+                    borderLeft: `2.5px solid ${theme.accent}`,
+                    paddingLeft: '16px'
                   }}>
-                    <div style={{ fontSize: '0.75rem', color: theme.textMuted }}>
+                    <div style={{ fontSize: '0.78125rem', color: theme.textMuted, fontWeight: 600 }}>
                       {edu.startYear} — {edu.endYear || 'Present'}
                     </div>
-                    <div style={{ fontWeight: 700, fontSize: '0.9375rem' }}>
+                    <div style={{ fontWeight: 800, fontSize: '1rem', color: theme.textPrimary, marginTop: '2px' }}>
                       {edu.degree} in {edu.branch}
                     </div>
-                    <div style={{ color: theme.textSecondary, fontSize: '0.8125rem' }}>
+                    <div style={{ color: theme.textSecondary, fontSize: '0.875rem', marginTop: '2px' }}>
                       {edu.college}
                     </div>
                     {edu.cgpa && (
-                      <div style={{ fontSize: '0.75rem', fontWeight: 600, color: theme.accent, marginTop: '2px' }}>
-                        CGPA: {edu.cgpa}
+                      <div style={{
+                        display: 'inline-block',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        color: theme.accent,
+                        backgroundColor: theme.accentSubtle,
+                        padding: '2px 8px',
+                        borderRadius: '6px',
+                        marginTop: '6px'
+                      }}>
+                        CGPA / Grade: {edu.cgpa}
                       </div>
                     )}
                   </div>
@@ -246,65 +333,88 @@ export const GridTemplate = ({ data }) => {
 
           {/* Box 5: Featured Projects (12 cols) */}
           {projects.length > 0 && (
-            <div style={{
-              gridColumn: 'span 12',
-              backgroundColor: theme.bgCard,
-              border: `1px solid ${theme.borderDefault}`,
-              borderRadius: '16px',
-              padding: '32px'
-            }}>
+            <div 
+              className="ios-card ios-reveal ios-reveal-delay-2" 
+              style={{
+                gridColumn: 'span 12',
+                backgroundColor: theme.bgCard,
+                border: `1px solid ${theme.borderDefault}`,
+                borderRadius: '24px',
+                padding: 'clamp(24px, 4vw, 36px)',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.03)'
+              }}
+            >
               <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                marginBottom: '24px'
+                marginBottom: '26px'
               }}>
-                <h3 style={{ fontSize: '1.35rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
-                  Projects & Builds
-                </h3>
-                <span style={{ fontSize: '0.8125rem', color: theme.textMuted }}>
+                <div>
+                  <h3 style={{ fontSize: '1.45rem', fontWeight: 800, letterSpacing: '-0.025em', color: theme.textPrimary }}>
+                    Featured Projects & Builds
+                  </h3>
+                  <p style={{ fontSize: '0.875rem', color: theme.textSecondary, marginTop: '2px' }}>
+                    Production applications, prototypes, and technical architectures.
+                  </p>
+                </div>
+                <span style={{
+                  fontSize: '0.8125rem',
+                  fontWeight: 700,
+                  color: theme.accent,
+                  backgroundColor: theme.accentSubtle,
+                  padding: '4px 10px',
+                  borderRadius: '999px'
+                }}>
                   {projects.length} Showcased
                 </span>
               </div>
 
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                gap: '20px'
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: '22px'
               }}>
                 {projects.map((proj, i) => (
-                  <div key={proj.id || i} style={{
-                    backgroundColor: theme.bgSubtle,
-                    borderRadius: '12px',
-                    overflow: 'hidden',
-                    border: `1px solid ${theme.borderLight}`,
-                    display: 'flex',
-                    flexDirection: 'column'
-                  }}>
+                  <div 
+                    key={proj.id || i} 
+                    className="ios-card"
+                    style={{
+                      backgroundColor: theme.bgSubtle,
+                      borderRadius: '16px',
+                      overflow: 'hidden',
+                      border: `1px solid ${theme.borderLight}`,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      boxShadow: '0 4px 14px rgba(0, 0, 0, 0.02)'
+                    }}
+                  >
                     {proj.image && (
                       <img 
                         src={proj.image} 
                         alt={proj.name}
-                        style={{ width: '100%', height: '170px', objectFit: 'cover' }}
+                        style={{ width: '100%', height: '180px', objectFit: 'cover' }}
                       />
                     )}
-                    <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                      <h4 style={{ fontSize: '1.0625rem', fontWeight: 700, marginBottom: '8px' }}>
+                    <div style={{ padding: '22px', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                      <h4 style={{ fontSize: '1.15rem', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: '8px', color: theme.textPrimary }}>
                         {proj.name}
                       </h4>
-                      <p style={{ color: theme.textSecondary, fontSize: '0.875rem', lineHeight: 1.5, flexGrow: 1, marginBottom: '14px' }}>
+                      <p style={{ color: theme.textSecondary, fontSize: '0.9rem', lineHeight: 1.6, flexGrow: 1, marginBottom: '16px' }}>
                         {proj.description}
                       </p>
 
                       {proj.technologies && proj.technologies.length > 0 && (
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '16px' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '18px' }}>
                           {proj.technologies.map((t, idx) => (
                             <span key={idx} style={{
                               fontSize: '0.75rem',
+                              fontWeight: 600,
                               backgroundColor: theme.bgCard,
-                              padding: '2px 8px',
-                              borderRadius: '4px',
-                              color: theme.textSecondary
+                              padding: '3px 10px',
+                              borderRadius: '6px',
+                              color: theme.textSecondary,
+                              border: `1px solid ${theme.borderDefault}`
                             }}>
                               {t}
                             </span>
@@ -312,19 +422,18 @@ export const GridTemplate = ({ data }) => {
                         </div>
                       )}
 
-                      <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: 'auto', paddingTop: '10px' }}>
                         {proj.liveUrl && (
                           <a 
                             href={proj.liveUrl} 
                             target="_blank" 
                             rel="noreferrer"
+                            className="btn btn-brand btn-sm ios-btn"
                             style={{
-                              fontSize: '0.8125rem',
-                              fontWeight: 700,
-                              color: theme.accent,
                               display: 'inline-flex',
                               alignItems: 'center',
-                              gap: '4px'
+                              gap: '6px',
+                              textDecoration: 'none'
                             }}
                           >
                             Live Demo <ExternalLink size={13} />
@@ -335,15 +444,15 @@ export const GridTemplate = ({ data }) => {
                             href={proj.githubUrl} 
                             target="_blank" 
                             rel="noreferrer"
+                            className="btn btn-secondary btn-sm ios-btn"
                             style={{
-                              fontSize: '0.8125rem',
-                              color: theme.textSecondary,
                               display: 'inline-flex',
                               alignItems: 'center',
-                              gap: '4px'
+                              gap: '6px',
+                              textDecoration: 'none'
                             }}
                           >
-                            <Github size={13} /> Code
+                            <Github size={14} /> Repository
                           </a>
                         )}
                       </div>
@@ -354,37 +463,50 @@ export const GridTemplate = ({ data }) => {
             </div>
           )}
 
-          {/* Box 6: Experience & Achievements (12 cols if present) */}
+          {/* Box 6: Experience & Achievements */}
           {(experience.length > 0 || achievements.length > 0) && (
-            <div style={{
-              gridColumn: 'span 12',
-              display: 'grid',
-              gridTemplateColumns: experience.length > 0 && achievements.length > 0 ? '1fr 1fr' : '1fr',
-              gap: '20px'
-            }} className="bento-box-exp-ach">
+            <div 
+              className="bento-box-exp-ach ios-reveal ios-reveal-delay-3" 
+              style={{
+                gridColumn: 'span 12',
+                display: 'grid',
+                gridTemplateColumns: experience.length > 0 && achievements.length > 0 ? '1fr 1fr' : '1fr',
+                gap: '20px'
+              }}
+            >
               {experience.length > 0 && (
-                <div style={{
+                <div className="ios-card" style={{
                   backgroundColor: theme.bgCard,
                   border: `1px solid ${theme.borderDefault}`,
-                  borderRadius: '16px',
-                  padding: '28px'
+                  borderRadius: '24px',
+                  padding: '30px',
+                  boxShadow: '0 8px 30px rgba(0, 0, 0, 0.03)'
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-                    <Briefcase size={18} color={theme.accent} />
-                    <h3 style={{ fontSize: '1.125rem', fontWeight: 700 }}>
-                      Experience
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '22px' }}>
+                    <div style={{
+                      padding: '8px',
+                      borderRadius: '10px',
+                      backgroundColor: theme.accentSubtle,
+                      color: theme.accent,
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}>
+                      <Briefcase size={18} />
+                    </div>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, letterSpacing: '-0.02em', color: theme.textPrimary }}>
+                      Work Experience
                     </h3>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     {experience.map((exp, i) => (
-                      <div key={exp.id || i}>
-                        <div style={{ fontSize: '0.75rem', color: theme.textMuted }}>
+                      <div key={exp.id || i} style={{ borderLeft: `2.5px solid ${theme.accent}`, paddingLeft: '16px' }}>
+                        <div style={{ fontSize: '0.75rem', color: theme.textMuted, fontWeight: 600 }}>
                           {exp.startDate} — {exp.endDate || 'Present'}
                         </div>
-                        <div style={{ fontWeight: 700, fontSize: '0.9375rem' }}>
-                          {exp.role} · <span style={{ fontWeight: 500, color: theme.textSecondary }}>{exp.organization}</span>
+                        <div style={{ fontWeight: 800, fontSize: '1rem', color: theme.textPrimary, marginTop: '2px' }}>
+                          {exp.role} · <span style={{ fontWeight: 600, color: theme.accent }}>{exp.organization}</span>
                         </div>
-                        <p style={{ color: theme.textSecondary, fontSize: '0.8125rem', marginTop: '4px' }}>
+                        <p style={{ color: theme.textSecondary, fontSize: '0.875rem', marginTop: '6px', lineHeight: 1.6 }}>
                           {exp.description}
                         </p>
                       </div>
@@ -394,28 +516,38 @@ export const GridTemplate = ({ data }) => {
               )}
 
               {achievements.length > 0 && (
-                <div style={{
+                <div className="ios-card" style={{
                   backgroundColor: theme.bgCard,
                   border: `1px solid ${theme.borderDefault}`,
-                  borderRadius: '16px',
-                  padding: '28px'
+                  borderRadius: '24px',
+                  padding: '30px',
+                  boxShadow: '0 8px 30px rgba(0, 0, 0, 0.03)'
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-                    <Award size={18} color={theme.accent} />
-                    <h3 style={{ fontSize: '1.125rem', fontWeight: 700 }}>
-                      Honors & Awards
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '22px' }}>
+                    <div style={{
+                      padding: '8px',
+                      borderRadius: '10px',
+                      backgroundColor: theme.accentSubtle,
+                      color: theme.accent,
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}>
+                      <Award size={18} />
+                    </div>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, letterSpacing: '-0.02em', color: theme.textPrimary }}>
+                      Honors & Recognitions
                     </h3>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                     {achievements.map((ach, i) => (
-                      <div key={ach.id || i}>
-                        <div style={{ fontSize: '0.75rem', color: theme.textMuted }}>
+                      <div key={ach.id || i} style={{ borderLeft: `2.5px solid ${theme.accent}`, paddingLeft: '16px' }}>
+                        <div style={{ fontSize: '0.75rem', color: theme.textMuted, fontWeight: 600 }}>
                           {ach.year}
                         </div>
-                        <div style={{ fontWeight: 700, fontSize: '0.9375rem' }}>
+                        <div style={{ fontWeight: 800, fontSize: '1rem', color: theme.textPrimary, marginTop: '2px' }}>
                           {ach.title}
                         </div>
-                        <div style={{ color: theme.textSecondary, fontSize: '0.8125rem' }}>
+                        <div style={{ color: theme.textSecondary, fontSize: '0.875rem', marginTop: '4px' }}>
                           {ach.organization} {ach.description && `— ${ach.description}`}
                         </div>
                       </div>
@@ -426,51 +558,17 @@ export const GridTemplate = ({ data }) => {
             </div>
           )}
 
-          {/* Box 7: Social Connect Strip (12 cols) */}
-          <div style={{
-            gridColumn: 'span 12',
-            backgroundColor: theme.bgCard,
-            border: `1px solid ${theme.borderDefault}`,
-            borderRadius: '16px',
-            padding: '24px 32px',
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '16px'
-          }}>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: '1.125rem', marginBottom: '4px' }}>
-                Let's Build Something Together
-              </div>
-              <div style={{ color: theme.textSecondary, fontSize: '0.875rem' }}>
-                Connect on GitHub, LinkedIn, WhatsApp, or send an email.
-              </div>
-            </div>
-            
-            <ContactButtons links={links} theme={theme} variant="section" style={{ width: '100%' }} />
-          </div>
         </div>
-      </div>
+      </main>
 
-      {/* BUILTD Platform Footer */}
-      <footer style={{
-        marginTop: '60px',
-        textAlign: 'center'
-      }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-          <Logo variant="compact" height={20} to="/" />
-          <span style={{ fontSize: '0.8125rem', color: theme.textMuted }}>
-            Built with <img src="/built.png" alt="BUILTD" style={{ height: '16px', verticalAlign: 'middle', display: 'inline-block', margin: '0 4px' }} /> — Build your digital identity.
-          </span>
-        </div>
-      </footer>
+      {/* BUILTD Signature Footer */}
+      <PortfolioFooter theme={theme} profileName={profile.name} />
 
       {/* Responsive adjustments for bento grid */}
       <style>{`
-        @media (max-width: 820px) {
+        @media (max-width: 860px) {
           .bento-box-hero { grid-column: span 12 !important; }
-          .bento-box-avatar { grid-column: span 12 !important; max-height: 220px; }
+          .bento-box-avatar { grid-column: span 12 !important; max-height: 240px; }
           .bento-box-skills { grid-column: span 12 !important; }
           .bento-box-edu { grid-column: span 12 !important; }
           .bento-box-exp-ach { grid-template-columns: 1fr !important; }
