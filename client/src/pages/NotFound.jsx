@@ -55,8 +55,8 @@ export const NotFound = () => {
           The page or portfolio you're looking for doesn't exist or has moved.
         </p>
 
-        <Link to="/" className="btn btn-brand" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-          <ArrowLeft size={16} /> Back to <img src="/built.png" alt="BUILTD" style={{ height: '18px', verticalAlign: 'middle' }} />
+        <Link to="/" className="btn btn-brand ios-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+          <ArrowLeft size={16} /> Back to <img src="/builtd.png" alt="BUILTD" style={{ height: '18px', verticalAlign: 'middle' }} />
         </Link>
       </div>
     </div>

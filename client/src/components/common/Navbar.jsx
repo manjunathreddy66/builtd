@@ -39,7 +39,7 @@ export const Navbar = () => {
         justifyContent: 'space-between',
         height: '68px'
       }}>
-        {/* Brand Logo: built.png */}
+        {/* Brand Logo: builtd.png */}
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Link 
             to="/" 
@@ -54,7 +54,7 @@ export const Navbar = () => {
             onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
             <img 
-              src="/built.png" 
+              src="/builtd.png" 
               alt="BUILTD" 
               style={{ 
                 height: '36px', 

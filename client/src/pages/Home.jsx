@@ -90,7 +90,7 @@ export const Home = () => {
         <div className="container">
           <div style={{ maxWidth: '860px', margin: '0 auto', textAlign: 'center' }}>
             
-            {/* Tagline Badge with built.png icon */}
+            {/* Tagline Badge with builtd.png icon */}
             <div style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -105,7 +105,7 @@ export const Home = () => {
               marginBottom: '20px',
               boxShadow: 'var(--shadow-sm)'
             }}>
-              <img src="/built.png" alt="BUILTD" style={{ height: '14px', verticalAlign: 'middle' }} />
+              <img src="/builtd.png" alt="BUILTD" style={{ height: '14px', verticalAlign: 'middle' }} />
               Student Digital Identity Platform
             </div>
 

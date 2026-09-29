@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 /**
  * BUILTD Brand Logo Component
- * - built.png brand mark
+ * - builtd.png brand mark
  */
 export const Logo = ({ 
   variant = 'compact', 
@@ -14,7 +14,7 @@ export const Logo = ({
   withLink = true 
 }) => {
   const isMain = variant === 'main';
-  const src = '/built.png';
+  const src = '/builtd.png';
   const altText = 'BUILTD';
 
   // Default optimal heights ensuring 0 distortion and native aspect ratio

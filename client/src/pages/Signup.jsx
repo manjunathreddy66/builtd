@@ -196,7 +196,7 @@ export const Signup = () => {
             marginTop: '16px',
             marginBottom: '6px'
           }}>
-            Create your <img src="/built.png" alt="BUILTD" style={{ height: '24px', verticalAlign: 'middle', margin: '0 4px', display: 'inline-block' }} /> account.
+            Create your <img src="/builtd.png" alt="BUILTD" style={{ height: '24px', verticalAlign: 'middle', margin: '0 4px', display: 'inline-block' }} /> account.
           </h1>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
             Start building your digital identity in minutes.

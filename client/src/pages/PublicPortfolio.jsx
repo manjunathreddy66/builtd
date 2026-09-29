@@ -67,7 +67,7 @@ export const PublicPortfolio = () => {
         gap: '20px'
       }}>
         <img 
-          src="/built.png" 
+          src="/builtd.png" 
           alt="BUILTD" 
           style={{ height: '36px', width: 'auto' }} 
         />
@@ -106,7 +106,7 @@ export const PublicPortfolio = () => {
           <div style={{ marginBottom: '22px' }}>
             <Link to="/">
               <img 
-                src="/built.png" 
+                src="/builtd.png" 
                 alt="BUILTD" 
                 style={{ height: '34px', width: 'auto' }} 
               />
@@ -132,7 +132,7 @@ export const PublicPortfolio = () => {
           </p>
 
           <Link to="/" className="btn btn-brand ios-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-            <ArrowLeft size={16} /> Back to <img src="/built.png" alt="BUILTD" style={{ height: '16px', verticalAlign: 'middle' }} />
+            <ArrowLeft size={16} /> Back to <img src="/builtd.png" alt="BUILTD" style={{ height: '16px', verticalAlign: 'middle' }} />
           </Link>
         </div>
       </div>

@@ -32,7 +32,7 @@ export const Footer = () => {
             onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
             <img 
-              src="/built.png" 
+              src="/builtd.png" 
               alt="BUILTD" 
               style={{ 
                 height: '36px', 
