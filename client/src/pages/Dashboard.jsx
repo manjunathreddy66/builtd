@@ -385,6 +385,93 @@ export const Dashboard = () => {
                 </Link>
               </div>
             </div>
+
+            {/* User Project Folder Card */}
+            <div style={{
+              backgroundColor: 'var(--bg-card)',
+              border: '1px solid var(--border-default)',
+              borderRadius: 'var(--radius-md)',
+              padding: '24px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '8px',
+                    backgroundColor: 'var(--brand-orange-light)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--brand-orange)'
+                  }}>
+                    <FolderGit2 size={18} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>
+                      Project Folder: <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--brand-orange)' }}>/{username}</span>
+                    </h3>
+                    <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                      All assets and content stored for builtd.vercel.app/{username}
+                    </p>
+                  </div>
+                </div>
+
+                <a
+                  href={`/${username}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-secondary btn-sm"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                >
+                  <ExternalLink size={14} /> Open Live Route
+                </a>
+              </div>
+
+              {/* Folder Structure */}
+              <div style={{
+                backgroundColor: 'var(--bg-main)',
+                border: '1px solid var(--border-default)',
+                borderRadius: 'var(--radius-sm)',
+                padding: '16px',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.8125rem'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  <span>📁 /{username}</span>
+                  <span style={{ fontSize: '0.72rem', backgroundColor: 'var(--brand-orange-light)', color: 'var(--brand-orange)', padding: '1px 6px', borderRadius: '4px' }}>
+                    active
+                  </span>
+                </div>
+
+                <div style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>├── 🖼️ profile.png</span>
+                    {portfolio.profile?.profileImage ? (
+                      <span style={{ color: 'var(--accent-green)', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <CheckCircle2 size={13} /> stored in folder
+                      </span>
+                    ) : (
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>default avatar</span>
+                    )}
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>├── 📄 portfolio.json</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+                      {portfolio.projects?.length || 0} projects, {portfolio.skills?.length || 0} skills
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>└── 🌐 index.html</span>
+                    <span style={{ color: 'var(--brand-orange)', fontSize: '0.75rem' }}>
+                      builtd.vercel.app/{username}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </main>
         </div>
       </div>

@@ -419,17 +419,40 @@ button, a, input, select, textarea {
   touch-action: manipulation;
 }
 
-/* Base Responsive Grid Helpers */
+/* Fluid Auto-adjusting Grid Helpers */
+.auto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
 .responsive-2col {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
+  width: 100%;
 }
 
 .responsive-3col {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+  width: 100%;
+}
+
+/* Dynamic Flex Layout Helpers */
+.mobile-stack {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.align-center-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 /* Tablet & Mobile Layout Adjustments (max-width: 1024px) */
@@ -449,6 +472,8 @@ button, a, input, select, textarea {
     display: flex !important;
     align-items: center;
     justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
   }
 
   .editor-grid {
@@ -457,7 +482,7 @@ button, a, input, select, textarea {
 
   .editorial-hero-grid {
     grid-template-columns: 1fr !important;
-    gap: 32px !important;
+    gap: 28px !important;
   }
 
   .responsive-3col {
@@ -468,35 +493,53 @@ button, a, input, select, textarea {
 /* Mobile Devices (max-width: 640px) */
 @media (max-width: 640px) {
   .container {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-
-  .container-narrow {
     padding-left: 14px;
     padding-right: 14px;
   }
 
-  /* Prevent iOS Safari auto-zoom on input focus */
+  .container-narrow {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .mobile-stack {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+  }
+
+  .mobile-full-width {
+    width: 100% !important;
+  }
+
+  .mobile-text-center {
+    text-align: center !important;
+  }
+
+  /* Prevent iOS Safari auto-zoom on input focus & ensure comfortable touch */
   input, textarea, select, .form-input {
     font-size: 16px !important;
+    min-height: 46px;
   }
 
   .btn {
-    padding: 10px 18px;
-    font-size: 0.875rem;
+    padding: 12px 18px;
+    font-size: 0.9rem;
+    min-height: 44px;
   }
 
   .btn-lg {
-    padding: 12px 22px;
+    padding: 14px 22px;
     font-size: 0.9375rem;
     width: 100%;
+    min-height: 48px;
   }
 
   .responsive-2col, .responsive-3col {
     grid-template-columns: 1fr !important;
-    gap: 12px !important;
+    gap: 14px !important;
   }
+
 
   .onboarding-card {
     padding: 24px 16px !important;

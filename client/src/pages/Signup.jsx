@@ -1,12 +1,24 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Logo } from '../components/common/Logo';
 import { useAuth } from '../context/AuthContext';
 import { usePortfolio } from '../context/PortfolioContext';
 import { AuthErrorAlert } from '../components/common/AuthErrorAlert';
+import { 
+  normalizeUsername, 
+  checkUsernameAvailability, 
+  registerNewUserPortfolio 
+} from '../services/portfolioService';
+import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 
 export const Signup = () => {
+  const [searchParams] = useSearchParams();
+  const initialHandle = searchParams.get('handle') || '';
+
   const [fullName, setFullName] = useState('');
+  const [username, setUsername] = useState(initialHandle);
+  const [usernameEdited, setUsernameEdited] = useState(Boolean(initialHandle));
+  const [usernameStatus, setUsernameStatus] = useState({ checking: false, available: null, message: '' });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -14,8 +26,43 @@ export const Signup = () => {
   const [loading, setLoading] = useState(false);
 
   const { signup, loginWithGoogle } = useAuth();
-  const { updateProfile } = usePortfolio();
+  const { setPortfolio, updateProfile, updateUsername } = usePortfolio();
   const navigate = useNavigate();
+
+  // Auto-generate username from full name if user hasn't manually customized it
+  useEffect(() => {
+    if (!usernameEdited && fullName.trim()) {
+      const generated = normalizeUsername(fullName);
+      setUsername(generated);
+    }
+  }, [fullName, usernameEdited]);
+
+  // Check username availability with debouncing
+  useEffect(() => {
+    if (!username || username.length < 3) {
+      setUsernameStatus({ checking: false, available: null, message: '' });
+      return;
+    }
+
+    let isMounted = true;
+    setUsernameStatus({ checking: true, available: null, message: '' });
+
+    const timer = setTimeout(async () => {
+      const result = await checkUsernameAvailability(username);
+      if (isMounted) {
+        setUsernameStatus({
+          checking: false,
+          available: result.available,
+          message: result.available ? 'Link available!' : (result.reason || 'Username is taken.')
+        });
+      }
+    }, 350);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [username]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,6 +75,24 @@ export const Signup = () => {
       });
       return;
     }
+
+    const cleanUsername = normalizeUsername(username);
+    if (!cleanUsername || cleanUsername.length < 3) {
+      setError({
+        title: 'Valid Username Required',
+        description: 'Your portfolio handle must be at least 3 characters (e.g. tony).'
+      });
+      return;
+    }
+
+    if (usernameStatus.available === false) {
+      setError({
+        title: 'Username Unavailable',
+        description: usernameStatus.message || 'Please choose a different username for your portfolio URL.'
+      });
+      return;
+    }
+
     if (!email.trim()) {
       setError({
         title: 'Email Address Required',
@@ -52,9 +117,21 @@ export const Signup = () => {
 
     try {
       setLoading(true);
-      await signup(email, password, fullName);
-      updateProfile({ name: fullName, email });
-      // Redirect directly to portfolio onboarding per requirements!
+      const user = await signup(email, password, fullName);
+      
+      // Immediately register Tony's live portfolio and dedicated folder /tony!
+      const initialPortfolio = await registerNewUserPortfolio(cleanUsername, fullName, email, {
+        uid: user?.uid
+      });
+
+      if (initialPortfolio) {
+        setPortfolio(initialPortfolio);
+      } else {
+        updateProfile({ name: fullName, email });
+        updateUsername(cleanUsername);
+      }
+
+      // Redirect to onboarding
       navigate('/onboarding');
     } catch (err) {
       setError(err);
@@ -68,7 +145,21 @@ export const Signup = () => {
       setLoading(true);
       setError(null);
       const user = await loginWithGoogle();
-      updateProfile({ name: user.displayName, email: user.email });
+      const cleanUsername = normalizeUsername(username || user.displayName || user.email.split('@')[0]);
+
+      // Initialize live portfolio and user folder
+      const initialPortfolio = await registerNewUserPortfolio(cleanUsername, user.displayName, user.email, {
+        uid: user.uid,
+        profileImage: user.photoURL || ''
+      });
+
+      if (initialPortfolio) {
+        setPortfolio(initialPortfolio);
+      } else {
+        updateProfile({ name: user.displayName, email: user.email });
+        updateUsername(cleanUsername);
+      }
+
       navigate('/onboarding');
     } catch (err) {
       setError(err);
@@ -126,12 +217,76 @@ export const Signup = () => {
               id="fullName"
               type="text"
               className="form-input"
-              placeholder="Alex Morgan"
+              placeholder="e.g. Tony Stark"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
             />
           </div>
+
+          <div className="form-group">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+              <label className="form-label" htmlFor="username" style={{ margin: 0 }}>
+                Portfolio Username / Handle
+              </label>
+              {usernameStatus.checking && (
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  <Loader2 size={12} className="spinner-orange" /> Checking...
+                </span>
+              )}
+              {!usernameStatus.checking && usernameStatus.available === true && (
+                <span style={{ fontSize: '0.75rem', color: 'var(--accent-green)', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
+                  <CheckCircle2 size={13} /> {usernameStatus.message}
+                </span>
+              )}
+              {!usernameStatus.checking && usernameStatus.available === false && (
+                <span style={{ fontSize: '0.75rem', color: 'var(--accent-red)', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
+                  <AlertCircle size={13} /> {usernameStatus.message}
+                </span>
+              )}
+            </div>
+            
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <input
+                id="username"
+                type="text"
+                className="form-input"
+                placeholder="tony"
+                value={username}
+                onChange={(e) => {
+                  setUsernameEdited(true);
+                  setUsername(normalizeUsername(e.target.value));
+                }}
+                required
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  borderColor: usernameStatus.available === false ? 'var(--accent-red)' : usernameStatus.available === true ? 'var(--accent-green)' : undefined
+                }}
+              />
+            </div>
+
+            <div style={{
+              marginTop: '6px',
+              fontSize: '0.8125rem',
+              color: 'var(--text-secondary)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              flexWrap: 'wrap'
+            }}>
+              <span>Live link:</span>
+              <code style={{
+                color: 'var(--brand-orange)',
+                fontWeight: 600,
+                backgroundColor: 'var(--brand-orange-light)',
+                padding: '2px 8px',
+                borderRadius: '4px'
+              }}>
+                builtd.vercel.app/{username || 'yourname'}
+              </code>
+            </div>
+          </div>
+
 
           <div className="form-group">
             <label className="form-label" htmlFor="email">

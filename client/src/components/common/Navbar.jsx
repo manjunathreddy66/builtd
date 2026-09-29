@@ -51,13 +51,38 @@ export const Navbar = () => {
         </div>
 
         {/* Desktop Navigation Links */}
-
+        <nav className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <Link
+            to="/explore"
+            style={{
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              color: location.pathname === '/explore' ? 'var(--brand-orange)' : 'var(--text-secondary)',
+              transition: 'color var(--transition-fast)'
+            }}
+          >
+            Explore Portfolios
+          </Link>
+          {currentUser && (
+            <Link
+              to="/editor"
+              style={{
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                color: location.pathname === '/editor' ? 'var(--brand-orange)' : 'var(--text-secondary)',
+                transition: 'color var(--transition-fast)'
+              }}
+            >
+              Editor
+            </Link>
+          )}
+        </nav>
 
         {/* Right Action Buttons */}
         <div className="desktop-actions" style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '16px'
+          gap: '12px'
         }}>
           {currentUser ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
@@ -133,7 +158,22 @@ export const Navbar = () => {
           flexDirection: 'column',
           gap: '18px'
         }}>
-
+          <Link
+            to="/explore"
+            onClick={() => setMobileMenuOpen(false)}
+            style={{
+              padding: '10px 0',
+              fontWeight: 600,
+              fontSize: '1rem',
+              color: 'var(--text-primary)',
+              borderBottom: '1px solid var(--border-default)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}
+          >
+            Explore Portfolios <span>→</span>
+          </Link>
 
           {currentUser ? (
             <>
