@@ -1,68 +1,111 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export const Footer = () => {
   return (
     <footer style={{
       backgroundColor: 'var(--bg-card)',
       borderTop: '1px solid var(--border-default)',
-      padding: '36px 0',
+      padding: '48px 0 36px 0',
       marginTop: 'auto',
-      textAlign: 'center'
+      transition: 'background-color var(--transition-base)'
     }}>
       <div className="container" style={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        gap: '10px',
-        fontSize: '0.875rem',
-        color: 'var(--text-secondary)'
+        textAlign: 'center',
+        gap: '24px'
       }}>
-        <div style={{ fontWeight: 500, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', flexWrap: 'wrap' }}>
-          © 2026{' '}
-          <a
-            href="https://builtd.vercel.app"
-            style={{ color: 'inherit', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
-            aria-label="BUILTD"
-          >
-            <img 
-              src="/built.png" 
-              alt="BUILTD" 
-              style={{ height: '20px', verticalAlign: 'middle', display: 'inline-block' }} 
-            />
-          </a>
-          . Build your digital identity. All rights reserved.
-        </div>
-        <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
-          Open for Students
-        </div>
-        <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', flexWrap: 'wrap' }}>
-          <a
-            href="https://builtd.vercel.app"
-            style={{ color: 'inherit', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
-            aria-label="BUILTD"
-          >
-            <img 
-              src="/built.png" 
-              alt="BUILTD" 
-              style={{ height: '18px', verticalAlign: 'middle', display: 'inline-block' }} 
-            />
-          </a>{' '}
-          by{' '}
-          <a 
-            href="https://www.instagram.com/66manjunathreddy" 
-            target="_blank" 
-            rel="noopener noreferrer"
+        {/* Top: Single prominent brand logo & description */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+          <Link 
+            to="/" 
             style={{ 
-              color: 'var(--brand-orange)', 
-              fontWeight: 600,
-              textDecoration: 'none'
+              display: 'inline-flex', 
+              alignItems: 'center',
+              textDecoration: 'none',
+              transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
             }}
-            onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
-            onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
+            aria-label="BUILTD Home"
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
-            Manjunath Reddy
-          </a>
+            <img 
+              src="/built.png" 
+              alt="BUILTD" 
+              style={{ 
+                height: '36px', 
+                width: 'auto', 
+                objectFit: 'contain',
+                filter: 'drop-shadow(0 2px 8px rgba(242, 92, 34, 0.12))' 
+              }} 
+            />
+          </Link>
+          <p style={{
+            fontSize: '0.9rem',
+            color: 'var(--text-secondary)',
+            maxWidth: '460px',
+            margin: 0,
+            lineHeight: 1.5
+          }}>
+            Build your digital identity — Dedicated portfolio platform open for students and builders worldwide.
+          </p>
+        </div>
+
+        {/* Subtle divider */}
+        <div style={{
+          width: '100%',
+          maxWidth: '560px',
+          height: '1px',
+          backgroundColor: 'var(--border-default)'
+        }} />
+
+        {/* Bottom Bar: Copyright & Attribution */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          width: '100%',
+          maxWidth: '720px',
+          flexWrap: 'wrap',
+          gap: '12px',
+          fontSize: '0.8125rem',
+          color: 'var(--text-secondary)'
+        }}>
+          <div style={{ fontWeight: 500 }}>
+            © 2026 BUILTD. All rights reserved.
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span>Built by</span>
+            <a 
+              href="https://www.instagram.com/66manjunathreddy" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ 
+                color: 'var(--brand-orange)', 
+                fontWeight: 600,
+                textDecoration: 'none',
+                padding: '3px 10px',
+                borderRadius: 'var(--radius-full)',
+                backgroundColor: 'rgba(242, 92, 34, 0.08)',
+                border: '1px solid rgba(242, 92, 34, 0.2)',
+                transition: 'background-color 0.2s ease, transform 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(242, 92, 34, 0.16)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(242, 92, 34, 0.08)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              Manjunath Reddy
+            </a>
+          </div>
         </div>
       </div>
     </footer>

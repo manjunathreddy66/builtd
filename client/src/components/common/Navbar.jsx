@@ -38,11 +38,27 @@ export const Navbar = () => {
       }}>
         {/* Brand Logo: built.png */}
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center' }} aria-label="BUILTD">
+          <Link 
+            to="/" 
+            style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center',
+              textDecoration: 'none',
+              transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+            }} 
+            aria-label="BUILTD"
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.04)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          >
             <img 
               src="/built.png" 
               alt="BUILTD" 
-              style={{ height: '36px', width: 'auto', objectFit: 'contain' }} 
+              style={{ 
+                height: '36px', 
+                width: 'auto', 
+                objectFit: 'contain',
+                filter: 'drop-shadow(0 2px 8px rgba(242, 92, 34, 0.12))' 
+              }} 
             />
           </Link>
         </div>
