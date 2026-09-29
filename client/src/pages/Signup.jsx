@@ -80,7 +80,7 @@ export const Signup = () => {
     if (!cleanUsername || cleanUsername.length < 3) {
       setError({
         title: 'Valid Username Required',
-        description: 'Your portfolio handle must be at least 3 characters (e.g. tony).'
+        description: 'Your portfolio handle must be at least 3 characters (e.g. yourname).'
       });
       return;
     }
@@ -119,7 +119,7 @@ export const Signup = () => {
       setLoading(true);
       const user = await signup(email, password, fullName);
       
-      // Immediately register Tony's live portfolio and dedicated folder /tony!
+      // Immediately register new user's live portfolio and dedicated folder
       const initialPortfolio = await registerNewUserPortfolio(cleanUsername, fullName, email, {
         uid: user?.uid
       });
@@ -196,7 +196,7 @@ export const Signup = () => {
             marginTop: '16px',
             marginBottom: '6px'
           }}>
-            Create your BUILTD account.
+            Create your <img src="/builtd.png" alt="BUILTD" style={{ height: '24px', verticalAlign: 'middle', margin: '0 4px', display: 'inline-block' }} /> account.
           </h1>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
             Start building your digital identity in minutes.
@@ -217,7 +217,7 @@ export const Signup = () => {
               id="fullName"
               type="text"
               className="form-input"
-              placeholder="e.g. Tony Stark"
+              placeholder="e.g. Alex Morgan"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
@@ -251,7 +251,7 @@ export const Signup = () => {
                 id="username"
                 type="text"
                 className="form-input"
-                placeholder="tony"
+                placeholder="yourname"
                 value={username}
                 onChange={(e) => {
                   setUsernameEdited(true);

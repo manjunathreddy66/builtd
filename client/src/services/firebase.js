@@ -1,6 +1,7 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getDatabase } from 'firebase/database';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
@@ -19,9 +20,12 @@ export const isFirebaseConfigured = Boolean(
   (import.meta.env.VITE_FIREBASE_PROJECT_ID || 'builtd')
 );
 
+export const RTDB_BASE_URL = firebaseConfig.databaseURL;
+
 let app;
 let auth;
 let db;
+let rtdb;
 let storage;
 let googleProvider;
 
@@ -33,10 +37,12 @@ try {
   }
   auth = getAuth(app);
   db = getFirestore(app);
+  rtdb = getDatabase(app);
   storage = getStorage(app);
   googleProvider = new GoogleAuthProvider();
 } catch (error) {
   console.warn('Firebase initialization in fallback mode:', error.message);
 }
 
-export { app, auth, db, storage, googleProvider };
+export { app, auth, db, rtdb, storage, googleProvider };
+

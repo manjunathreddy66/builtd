@@ -36,33 +36,19 @@ export const Navbar = () => {
         justifyContent: 'space-between',
         height: '70px'
       }}>
-        {/* Brand Logo: Compact builtd.png */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Logo variant="compact" height={32} to="/" />
-          <span style={{
-            fontFamily: 'var(--font-display)',
-            fontWeight: 800,
-            fontSize: '1.25rem',
-            letterSpacing: '-0.02em',
-            color: 'var(--text-primary)'
-          }}>
-            BUILTD
-          </span>
+        {/* Brand Logo: builtd.png */}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center' }} aria-label="BUILTD">
+            <img 
+              src="/builtd.png" 
+              alt="BUILTD" 
+              style={{ height: '36px', width: 'auto', objectFit: 'contain' }} 
+            />
+          </Link>
         </div>
 
         {/* Desktop Navigation Links */}
         <nav className="desktop-nav" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <Link
-            to="/explore"
-            style={{
-              fontSize: '0.9rem',
-              fontWeight: 600,
-              color: location.pathname === '/explore' ? 'var(--brand-orange)' : 'var(--text-secondary)',
-              transition: 'color var(--transition-fast)'
-            }}
-          >
-            Explore Portfolios
-          </Link>
           {currentUser && (
             <Link
               to="/editor"
@@ -158,22 +144,6 @@ export const Navbar = () => {
           flexDirection: 'column',
           gap: '18px'
         }}>
-          <Link
-            to="/explore"
-            onClick={() => setMobileMenuOpen(false)}
-            style={{
-              padding: '10px 0',
-              fontWeight: 600,
-              fontSize: '1rem',
-              color: 'var(--text-primary)',
-              borderBottom: '1px solid var(--border-default)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between'
-            }}
-          >
-            Explore Portfolios <span>→</span>
-          </Link>
 
           {currentUser ? (
             <>

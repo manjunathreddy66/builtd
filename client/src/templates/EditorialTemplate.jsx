@@ -672,7 +672,7 @@ export const EditorialTemplate = ({ data }) => {
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
           <Logo variant="compact" height={22} to="/" />
           <span style={{ fontSize: '0.8125rem', fontFamily: 'var(--font-mono)', color: theme.textMuted }}>
-            PORTFOLIO POWERED BY <strong>BUILTD</strong> — BUILD YOUR DIGITAL IDENTITY.
+            PORTFOLIO POWERED BY <img src="/builtd.png" alt="BUILTD" style={{ height: '16px', verticalAlign: 'middle', display: 'inline-block', margin: '0 4px' }} /> — BUILD YOUR DIGITAL IDENTITY.
           </span>
         </div>
       </footer>

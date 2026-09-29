@@ -1,10 +1,106 @@
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage, isFirebaseConfigured } from './firebase';
+import { ref as dbRefHelper, set, get } from 'firebase/database';
+import { rtdb, RTDB_BASE_URL } from './firebase';
 import { RESERVED_USERNAMES, INITIAL_STUDENT_PORTFOLIOS } from './initialData';
 
 const LOCAL_STORAGE_KEY = 'builtd_portfolios_v1';
 const USER_FOLDERS_KEY = 'builtd_user_folders_v1';
+
+// Purge any old legacy seed data (arjun, rahul, priya, ananya) from localStorage
+const purgeOldSeedData = () => {
+  try {
+    const legacyNames = ['arjun', 'rahul', 'ananya', 'priya'];
+    const rawPortfolios = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (rawPortfolios) {
+      const parsed = JSON.parse(rawPortfolios);
+      let changed = false;
+      legacyNames.forEach(legacy => {
+        if (parsed[legacy]) {
+          delete parsed[legacy];
+          changed = true;
+        }
+      });
+      if (changed) {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(parsed));
+      }
+    }
+
+    const rawFolders = localStorage.getItem(USER_FOLDERS_KEY);
+    if (rawFolders) {
+      const parsed = JSON.parse(rawFolders);
+      let changed = false;
+      legacyNames.forEach(legacy => {
+        if (parsed[legacy]) {
+          delete parsed[legacy];
+          changed = true;
+        }
+      });
+      if (changed) {
+        localStorage.setItem(USER_FOLDERS_KEY, JSON.stringify(parsed));
+      }
+    }
+  } catch (e) {
+    // Ignore storage parse issues
+  }
+};
+purgeOldSeedData();
+
+// Cloud write helper (uses RTDB SDK with resilient direct REST fallback)
+const writeToCloud = async (path, data) => {
+  // Method 1: RTDB SDK
+  try {
+    if (rtdb) {
+      const dbRef = dbRefHelper(rtdb, path);
+      await set(dbRef, data);
+      return true;
+    }
+  } catch (e) {
+    console.warn(`RTDB SDK write failed for ${path}, trying REST fallback:`, e.message);
+  }
+
+  // Method 2: Direct REST PUT fallback
+  try {
+    const url = `${RTDB_BASE_URL}/${path}.json`;
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return res.ok;
+  } catch (e) {
+    console.warn(`RTDB REST write failed for ${path}:`, e.message);
+    return false;
+  }
+};
+
+// Cloud read helper (uses RTDB SDK with direct REST fallback)
+const readFromCloud = async (path) => {
+  // Method 1: RTDB SDK
+  try {
+    if (rtdb) {
+      const dbRef = dbRefHelper(rtdb, path);
+      const snap = await get(dbRef);
+      if (snap.exists()) {
+        return snap.val();
+      }
+    }
+  } catch (e) {
+    console.warn(`RTDB SDK read failed for ${path}, trying REST fallback:`, e.message);
+  }
+
+  // Method 2: Direct REST GET fallback
+  try {
+    const url = `${RTDB_BASE_URL}/${path}.json`;
+    const res = await fetch(url, { cache: 'no-cache' });
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    }
+  } catch (e) {
+    console.warn(`RTDB REST read failed for ${path}:`, e.message);
+  }
+
+  return null;
+};
 
 // Get all user virtual folders
 export const getAllUserFolders = () => {
@@ -16,18 +112,44 @@ export const getAllUserFolders = () => {
   }
 };
 
-// Retrieve a specific user folder (e.g. /tony)
+// Retrieve a specific user folder (e.g. /username)
 export const getUserFolder = (rawUsername) => {
   const username = normalizeUsername(rawUsername);
   if (!username) return null;
   const folders = getAllUserFolders();
-  return folders[username] || null;
+  if (folders[username]) return folders[username];
+
+  const localPortfolio = getLocalPortfolioByUsername(username);
+  if (localPortfolio) {
+    saveUserFolder(username, localPortfolio);
+    return getAllUserFolders()[username] || null;
+  }
+  return null;
+};
+
+// Async fetch for user folder ensuring cloud sync across devices
+export const fetchUserFolder = async (rawUsername) => {
+  const username = normalizeUsername(rawUsername);
+  if (!username) return null;
+  const local = getUserFolder(username);
+  if (local) return local;
+
+  const cloudFolder = await readFromCloud(`user_folders/${username}`);
+  if (cloudFolder) {
+    const folders = getAllUserFolders();
+    folders[username] = cloudFolder;
+    try {
+      localStorage.setItem(USER_FOLDERS_KEY, JSON.stringify(folders));
+    } catch (e) {}
+    return cloudFolder;
+  }
+  return null;
 };
 
 // Save / update a user folder with portfolio data and asset files
 export const saveUserFolder = (rawUsername, portfolioData, newFile = null) => {
   const username = normalizeUsername(rawUsername);
-  if (!username) return;
+  if (!username) return null;
   try {
     const folders = getAllUserFolders();
     const existing = folders[username] || {
@@ -37,9 +159,8 @@ export const saveUserFolder = (rawUsername, portfolioData, newFile = null) => {
       files: []
     };
 
-    let updatedFiles = [...existing.files];
+    let updatedFiles = [...(existing.files || [])];
     if (newFile) {
-      // Replace if file with same name exists, else append
       updatedFiles = updatedFiles.filter(f => f.name !== newFile.name);
       updatedFiles.push({
         name: newFile.name,
@@ -61,31 +182,37 @@ export const saveUserFolder = (rawUsername, portfolioData, newFile = null) => {
       updatedAt: new Date().toISOString()
     });
 
-    folders[username] = {
+    const folderData = {
       ...existing,
       updatedAt: new Date().toISOString(),
       portfolioData,
       files: updatedFiles
     };
 
+    folders[username] = folderData;
     localStorage.setItem(USER_FOLDERS_KEY, JSON.stringify(folders));
+
+    // Non-blocking cloud sync for user folder
+    writeToCloud(`user_folders/${username}`, folderData).catch(() => {});
+
+    return folderData;
   } catch (e) {
     console.error('Error saving user folder:', e);
+    return null;
   }
 };
 
-// Helper to get all stored portfolios (merging initial seeds + local saves)
+// Helper to get all stored portfolios (local storage only, no stale seeds)
 export const getAllStoredPortfolios = () => {
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!raw) {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(INITIAL_STUDENT_PORTFOLIOS));
-      return { ...INITIAL_STUDENT_PORTFOLIOS };
+      return {};
     }
     const parsed = JSON.parse(raw);
-    return { ...INITIAL_STUDENT_PORTFOLIOS, ...parsed };
+    return { ...parsed };
   } catch (e) {
-    return { ...INITIAL_STUDENT_PORTFOLIOS };
+    return {};
   }
 };
 
@@ -99,7 +226,7 @@ export const saveToLocalPortfolios = (username, data) => {
       updatedAt: new Date().toISOString()
     };
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(current));
-    // Automatically keep the user folder in sync as well
+    // Keep user folder in sync as well
     saveUserFolder(cleanUser, current[cleanUser]);
   } catch (e) {
     console.error('Error saving to localStorage:', e);
@@ -152,26 +279,22 @@ export const checkUsernameAvailability = async (rawUsername, currentUid = null) 
     };
   }
 
-  // 1. If Firebase is active, check Firestore collection
-  if (isFirebaseConfigured && db) {
-    try {
-      const usernameRef = doc(db, 'usernames', username);
-      const snap = await getDoc(usernameRef);
-      if (snap.exists()) {
-        const data = snap.data();
-        if (currentUid && data.uid === currentUid) {
-          return { available: true, normalized: username };
-        }
-        return {
-          available: false,
-          normalized: username,
-          reason: 'This portfolio name is already taken.',
-          suggestions: generateSuggestions(username)
-        };
+  // 1. Check cloud database (Realtime Database)
+  try {
+    const cloudRecord = await readFromCloud(`usernames/${username}`);
+    if (cloudRecord) {
+      if (currentUid && cloudRecord.uid === currentUid) {
+        return { available: true, normalized: username };
       }
-    } catch (e) {
-      console.warn('Firestore username check fallback to local:', e.message);
+      return {
+        available: false,
+        normalized: username,
+        reason: 'This portfolio name is already taken.',
+        suggestions: generateSuggestions(username)
+      };
     }
+  } catch (e) {
+    console.warn('Cloud username check note:', e.message);
   }
 
   // 2. Check local database
@@ -214,40 +337,30 @@ export const getLocalPortfolioByUsername = (rawUsername) => {
   return all[username] || null;
 };
 
-// Fetch portfolio by username (fast instant local with quick remote revalidation)
+// Fetch portfolio by username (fast instant local with cloud sync across all devices)
 export const getPortfolioByUsername = async (rawUsername) => {
+  if (!rawUsername) return null;
   const username = normalizeUsername(rawUsername);
+  if (!username) return null;
+
   const localData = getLocalPortfolioByUsername(username);
 
-  if (isFirebaseConfigured && db) {
-    try {
-      const fetchPromise = (async () => {
-        const usernameRef = doc(db, 'usernames', username);
-        const usernameSnap = await getDoc(usernameRef);
-        if (usernameSnap.exists()) {
-          const uid = usernameSnap.data().uid;
-          const userRef = doc(db, 'users', uid);
-          const userSnap = await getDoc(userRef);
-          if (userSnap.exists()) {
-            return userSnap.data();
-          }
-        }
-        return null;
-      })();
-
-      // Fast timeout so users never wait on network latency
-      const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(null), 1500));
-      const remoteData = await Promise.race([fetchPromise, timeoutPromise]);
-      if (remoteData) return remoteData;
-    } catch (e) {
-      console.warn('Firestore getPortfolio fallback to local:', e.message);
+  // ALWAYS check cloud database so portfolio is immediately visible on any device/phone
+  try {
+    const remoteData = await readFromCloud(`portfolios/${username}`);
+    if (remoteData && remoteData.username) {
+      // Cache locally on this device so future visits load with 0ms delay
+      saveToLocalPortfolios(username, remoteData);
+      return remoteData;
     }
+  } catch (e) {
+    console.warn('Error fetching portfolio from cloud:', e);
   }
 
   return localData;
 };
 
-// Save or publish portfolio with instant local persistence and non-blocking cloud sync
+// Save or publish portfolio with instant local persistence and reliable cloud sync
 export const savePortfolio = async (portfolioData) => {
   const { uid, username } = portfolioData;
   const normalizedUser = normalizeUsername(username);
@@ -256,51 +369,46 @@ export const savePortfolio = async (portfolioData) => {
     return { success: false, error: 'A valid portfolio username is required to publish.' };
   }
 
-  // 1. Update locally first for 0ms instantaneous responsiveness
+  const completePortfolio = {
+    ...portfolioData,
+    username: normalizedUser,
+    published: true,
+    updatedAt: new Date().toISOString()
+  };
+
+  // 1. Instant local persistence
   try {
-    saveToLocalPortfolios(normalizedUser, portfolioData);
+    saveToLocalPortfolios(normalizedUser, completePortfolio);
   } catch (localErr) {
     console.error('Local save error:', localErr);
     return { success: false, error: 'Failed to save portfolio to local storage.' };
   }
 
+  // 2. Multi-point Cloud Persistence for cross-device visibility
   let syncedToCloud = false;
   let cloudError = null;
 
-  // 2. Cloud Firestore sync with timeout guard so user is NEVER blocked
-  if (isFirebaseConfigured && db && uid) {
-    try {
-      const cloudSyncTask = (async () => {
-        await Promise.all([
-          // 1. Claim username document
-          setDoc(doc(db, 'usernames', normalizedUser), {
-            uid,
-            username: normalizedUser,
-            updatedAt: new Date().toISOString()
-          }, { merge: true }),
+  try {
+    const cloudPromises = [
+      // Direct portfolio document by username (so builtd.vercel.app/:username finds it on any device)
+      writeToCloud(`portfolios/${normalizedUser}`, completePortfolio),
+      // Username registration index
+      writeToCloud(`usernames/${normalizedUser}`, {
+        uid: uid || 'user-' + Date.now(),
+        username: normalizedUser,
+        updatedAt: new Date().toISOString()
+      })
+    ];
 
-          // 2. Save user profile document
-          setDoc(doc(db, 'users', uid), {
-            ...portfolioData,
-            username: normalizedUser,
-            updatedAt: new Date().toISOString()
-          }, { merge: true })
-        ]);
-      })();
-
-      // Timeout at 1200ms: if Firestore is slow or offline, complete immediately
-      const timeoutGuard = new Promise((resolve) => 
-        setTimeout(() => resolve('TIMEOUT'), 1200)
-      );
-
-      const syncResult = await Promise.race([cloudSyncTask, timeoutGuard]);
-      if (syncResult !== 'TIMEOUT') {
-        syncedToCloud = true;
-      }
-    } catch (e) {
-      console.warn('Cloud sync note:', e.message);
-      cloudError = e.message;
+    if (uid) {
+      cloudPromises.push(writeToCloud(`users/${uid}`, completePortfolio));
     }
+
+    const results = await Promise.all(cloudPromises);
+    syncedToCloud = results.some(Boolean);
+  } catch (e) {
+    console.warn('Cloud sync note:', e.message);
+    cloudError = e.message;
   }
 
   return { 
@@ -317,26 +425,20 @@ export const uploadPortfolioAsset = async (file, username, assetName) => {
   const cleanName = assetName.replace(/[^a-zA-Z0-9._-]/g, '');
 
   let fileUrl = '';
-  if (isFirebaseConfigured && storage) {
-    try {
-      const storageRef = ref(storage, `portfolio-assets/${sanitizedUsername}/${cleanName}`);
-      const snapshot = await uploadBytes(storageRef, file);
-      fileUrl = await getDownloadURL(snapshot.ref);
-    } catch (e) {
-      console.warn('Firebase storage upload failed, falling back to local ObjectURL:', e.message);
-    }
-  }
 
-  // Fallback to data URL
-  if (!fileUrl) {
-    fileUrl = await new Promise((resolve) => {
+  // Convert to data URL for guaranteed cross-device rendering
+  try {
+    fileUrl = await new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => resolve(e.target.result);
+      reader.onerror = reject;
       reader.readAsDataURL(file);
     });
+  } catch (e) {
+    console.warn('FileReader error:', e);
   }
 
-  // Automatically register this image file in the user's folder
+  // Automatically register this image file in the user's folder & cloud
   const currentPortfolio = getLocalPortfolioByUsername(sanitizedUsername) || {};
   saveUserFolder(sanitizedUsername, currentPortfolio, {
     name: cleanName,
@@ -397,10 +499,10 @@ export const registerNewUserPortfolio = async (rawUsername, fullName, email, cus
     }
   };
 
-  // 1. Save to local portfolios
+  // 1. Save locally
   saveToLocalPortfolios(username, initialPortfolio);
 
-  // 2. Initialize the user folder /username with profile.png and portfolio.json
+  // 2. Initialize user folder with profile.png and portfolio.json
   saveUserFolder(username, initialPortfolio, {
     name: 'profile.png',
     type: 'image/png',
@@ -408,7 +510,7 @@ export const registerNewUserPortfolio = async (rawUsername, fullName, email, cus
     url: initialPortfolio.profile.profileImage
   });
 
-  // 3. Save to cloud if Firebase is available
+  // 3. Save to cloud immediately so portfolio works on ALL devices
   try {
     await savePortfolio(initialPortfolio);
   } catch (e) {
@@ -417,4 +519,3 @@ export const registerNewUserPortfolio = async (rawUsername, fullName, email, cus
 
   return initialPortfolio;
 };
-

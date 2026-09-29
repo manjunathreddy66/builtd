@@ -9,7 +9,6 @@ import {
   QrCode,
   Copy,
   Check,
-  Folder,
   Share2
 } from 'lucide-react';
 import { 
@@ -22,17 +21,16 @@ export const Home = () => {
   const navigate = useNavigate();
 
   // 1. Live Claimer State
-  const [claimHandle, setClaimHandle] = useState('tony');
-  const [claimStatus, setClaimStatus] = useState({ checking: false, available: true, message: 'Available' });
+  const [claimHandle, setClaimHandle] = useState('');
+  const [claimStatus, setClaimStatus] = useState({ checking: false, available: null, message: '' });
 
   // 2. Quick Search State
   const [searchQuery, setSearchQuery] = useState('');
   const [searchError, setSearchError] = useState('');
 
   // 3. QR Code & Tool State
-  const [qrHandle, setQrHandle] = useState('tony');
+  const [qrHandle, setQrHandle] = useState('');
   const [copiedLink, setCopiedLink] = useState(false);
-  const [showFolderModal, setShowFolderModal] = useState(false);
 
   const allPortfolios = getAllStoredPortfolios();
 
@@ -40,7 +38,7 @@ export const Home = () => {
   useEffect(() => {
     const clean = normalizeUsername(claimHandle);
     if (!clean || clean.length < 3) {
-      setClaimStatus({ checking: false, available: null, message: 'Enter at least 3 characters' });
+      setClaimStatus({ checking: false, available: null, message: clean ? 'Enter at least 3 characters' : '' });
       return;
     }
 
@@ -93,7 +91,7 @@ export const Home = () => {
         <div className="container">
           <div style={{ maxWidth: '860px', margin: '0 auto', textAlign: 'center' }}>
             
-            {/* Tagline Badge */}
+            {/* Tagline Badge with builtd.png icon */}
             <div style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -108,7 +106,7 @@ export const Home = () => {
               marginBottom: '20px',
               boxShadow: 'var(--shadow-sm)'
             }}>
-              <span style={{ width: '7px', height: '7px', backgroundColor: 'var(--brand-orange)', borderRadius: '50%' }} />
+              <img src="/builtd.png" alt="BUILTD" style={{ height: '14px', verticalAlign: 'middle' }} />
               Student Digital Identity Platform
             </div>
 
@@ -175,7 +173,7 @@ export const Home = () => {
                     type="text"
                     value={claimHandle}
                     onChange={(e) => setClaimHandle(normalizeUsername(e.target.value))}
-                    placeholder="tony"
+                    placeholder="yourname"
                     className="selectable-text"
                     style={{
                       border: 'none',
@@ -192,7 +190,7 @@ export const Home = () => {
                 </div>
 
                 <button
-                  onClick={() => navigate(`/signup?handle=${normalizeUsername(claimHandle) || 'tony'}`)}
+                  onClick={() => navigate(claimHandle ? `/signup?handle=${normalizeUsername(claimHandle)}` : '/signup')}
                   className="btn btn-brand"
                   style={{
                     padding: '12px 20px',
@@ -222,16 +220,18 @@ export const Home = () => {
                     <span style={{ color: 'var(--accent-green)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                       <CheckCircle2 size={14} /> builtd.vercel.app/{claimHandle} is ready!
                     </span>
-                  ) : (
+                  ) : claimStatus.message ? (
                     <span style={{ color: 'var(--accent-red)', fontWeight: 600 }}>
                       ✕ {claimStatus.message}
                     </span>
+                  ) : (
+                    <span style={{ color: 'var(--text-muted)' }}>Type your desired username</span>
                   )}
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span style={{ color: 'var(--text-muted)' }}>Try:</span>
-                  {['tony', 'alex', 'priya', 'dev'].map(s => (
+                  {['alex', 'sam', 'maya', 'dev'].map(s => (
                     <button
                       key={s}
                       type="button"
@@ -253,26 +253,6 @@ export const Home = () => {
               </div>
             </div>
 
-            {/* Quick Links & Direct Actions */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '14px',
-              flexWrap: 'wrap',
-              marginTop: '16px'
-            }}>
-              <Link to="/explore" className="btn btn-secondary btn-sm">
-                Explore Portfolios
-              </Link>
-              <button
-                onClick={() => setShowFolderModal(true)}
-                className="btn btn-ghost btn-sm"
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)' }}
-              >
-                <Folder size={15} color="var(--brand-orange)" /> How /username folders work
-              </button>
-            </div>
           </div>
         </div>
       </section>
@@ -309,7 +289,7 @@ export const Home = () => {
               <form onSubmit={handleQuickSearch} style={{ display: 'flex', gap: '8px' }}>
                 <input
                   type="text"
-                  placeholder="e.g. arjun or priya"
+                  placeholder="e.g. username"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="form-input"
@@ -338,7 +318,7 @@ export const Home = () => {
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
                 <img
-                  src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&margin=4&data=https://builtd.vercel.app/${normalizeUsername(qrHandle) || 'tony'}`}
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&margin=4&data=https://builtd.vercel.app/${normalizeUsername(qrHandle) || 'yourname'}`}
                   alt="Portfolio QR"
                   style={{
                     width: '76px',
@@ -354,18 +334,18 @@ export const Home = () => {
                     type="text"
                     value={qrHandle}
                     onChange={(e) => setQrHandle(normalizeUsername(e.target.value))}
-                    placeholder="handle"
+                    placeholder="yourname"
                     className="form-input"
                     style={{ padding: '8px 10px', fontSize: '0.8125rem', marginBottom: '8px' }}
                   />
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    Target: builtd.vercel.app/{qrHandle || 'tony'}
+                    Target: builtd.vercel.app/{qrHandle || 'yourname'}
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Tool C: One-Click Share & Folder Architecture */}
+            {/* Tool C: One-Click Share */}
             <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                 <Share2 size={20} color="var(--brand-orange)" />
@@ -382,7 +362,7 @@ export const Home = () => {
                 style={{ width: '100%', justifyContent: 'space-between', padding: '10px 14px' }}
               >
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8125rem' }}>
-                  builtd.vercel.app/{claimHandle || 'tony'}
+                  builtd.vercel.app/{claimHandle || 'yourname'}
                 </span>
                 {copiedLink ? (
                   <span style={{ color: 'var(--accent-green)', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
@@ -430,7 +410,7 @@ export const Home = () => {
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
             <Link
-              to={`/signup?handle=${claimHandle || 'tony'}`}
+              to={claimHandle ? `/signup?handle=${claimHandle}` : '/signup'}
               className="btn btn-brand btn-lg"
               style={{ maxWidth: '320px' }}
             >
@@ -439,86 +419,6 @@ export const Home = () => {
           </div>
         </div>
       </section>
-
-      {/* ============================================================
-          MODAL: USER FOLDER ARCHITECTURE EXPLANATION
-          ============================================================ */}
-      {showFolderModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000,
-          padding: '20px'
-        }}
-          onClick={() => setShowFolderModal(false)}
-        >
-          <div style={{
-            backgroundColor: 'var(--bg-card)',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid var(--border-default)',
-            maxWidth: '540px',
-            width: '100%',
-            padding: '30px',
-            boxShadow: 'var(--shadow-lg)'
-          }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-              <Folder size={22} color="var(--brand-orange)" />
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>
-                How /{claimHandle || 'tony'} Works
-              </h3>
-            </div>
-
-            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '20px' }}>
-              When a new user registers on BUILTD with username <strong>"{claimHandle || 'tony'}"</strong>, the system allocates a dedicated namespace and folder tree:
-            </p>
-
-            <div style={{
-              backgroundColor: 'var(--bg-main)',
-              border: '1px solid var(--border-default)',
-              borderRadius: 'var(--radius-sm)',
-              padding: '16px',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.8125rem',
-              lineHeight: 1.8,
-              marginBottom: '20px'
-            }}>
-              <div style={{ color: 'var(--brand-orange)', fontWeight: 700 }}>📁 /{claimHandle || 'tony'}</div>
-              <div style={{ paddingLeft: '20px', color: 'var(--text-secondary)' }}>├── 📄 portfolio.json <span style={{ color: 'var(--text-muted)' }}>(Bio, skills, projects)</span></div>
-              <div style={{ paddingLeft: '20px', color: 'var(--text-secondary)' }}>├── 🖼️ profile.png <span style={{ color: 'var(--text-muted)' }}>(Uploaded avatar image)</span></div>
-              <div style={{ paddingLeft: '20px', color: 'var(--text-secondary)' }}>└── 🌐 builtd.vercel.app/{claimHandle || 'tony'}</div>
-            </div>
-
-            <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginBottom: '24px' }}>
-              Any visitor searching <strong>builtd.vercel.app/{claimHandle || 'tony'}</strong> automatically loads this user folder and renders the live portfolio.
-            </p>
-
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-              <button
-                type="button"
-                onClick={() => setShowFolderModal(false)}
-                className="btn btn-secondary btn-sm"
-              >
-                Close
-              </button>
-              <Link
-                to={`/signup?handle=${claimHandle || 'tony'}`}
-                className="btn btn-brand btn-sm"
-              >
-                Register /{claimHandle || 'tony'} →
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   );

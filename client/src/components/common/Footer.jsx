@@ -18,29 +18,35 @@ export const Footer = () => {
         fontSize: '0.875rem',
         color: 'var(--text-secondary)'
       }}>
-        <div style={{ fontWeight: 500, color: 'var(--text-primary)' }}>
+        <div style={{ fontWeight: 500, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', flexWrap: 'wrap' }}>
           © 2026{' '}
           <a
             href="https://builtd.vercel.app"
-            style={{ color: 'inherit', textDecoration: 'none', fontWeight: 700 }}
-            onMouseEnter={(e) => e.target.style.color = 'var(--brand-orange)'}
-            onMouseLeave={(e) => e.target.style.color = 'inherit'}
+            style={{ color: 'inherit', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+            aria-label="BUILTD"
           >
-            BUILTD
+            <img 
+              src="/builtd.png" 
+              alt="BUILTD" 
+              style={{ height: '20px', verticalAlign: 'middle', display: 'inline-block' }} 
+            />
           </a>
           . Build your digital identity. All rights reserved.
         </div>
         <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
           Open for Students
         </div>
-        <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
+        <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', flexWrap: 'wrap' }}>
           <a
             href="https://builtd.vercel.app"
-            style={{ color: 'inherit', textDecoration: 'none', fontWeight: 600 }}
-            onMouseEnter={(e) => e.target.style.color = 'var(--brand-orange)'}
-            onMouseLeave={(e) => e.target.style.color = 'inherit'}
+            style={{ color: 'inherit', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+            aria-label="BUILTD"
           >
-            BuiltD
+            <img 
+              src="/builtd.png" 
+              alt="BUILTD" 
+              style={{ height: '18px', verticalAlign: 'middle', display: 'inline-block' }} 
+            />
           </a>{' '}
           by{' '}
           <a 
