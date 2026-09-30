@@ -45,7 +45,7 @@ const purgeOldSeedData = () => {
 purgeOldSeedData();
 
 // Cloud write helper (uses RTDB SDK with resilient direct REST fallback)
-const writeToCloud = async (path, data) => {
+export const writeToCloud = async (path, data) => {
   // Method 1: RTDB SDK
   try {
     if (rtdb) {
@@ -73,7 +73,7 @@ const writeToCloud = async (path, data) => {
 };
 
 // Cloud read helper (uses RTDB SDK with direct REST fallback)
-const readFromCloud = async (path) => {
+export const readFromCloud = async (path) => {
   // Method 1: RTDB SDK
   try {
     if (rtdb) {

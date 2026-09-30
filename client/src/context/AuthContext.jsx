@@ -5,7 +5,9 @@ import {
   signInWithPopup, 
   signOut, 
   onAuthStateChanged,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  setPersistence,
+  browserLocalPersistence
 } from 'firebase/auth';
 import { auth, googleProvider, isFirebaseConfigured } from '../services/firebase';
 
@@ -14,25 +16,58 @@ const AuthContext = createContext(null);
 const DEMO_AUTH_KEY = 'builtd_auth_user';
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
+  // Synchronously initialize currentUser from persistent storage to eliminate 0-second logout flicker
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem(DEMO_AUTH_KEY);
+      return stored ? JSON.parse(stored) : null;
+    } catch (e) {
+      console.warn('Error reading stored session:', e);
+      return null;
+    }
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let unsubscribe = null;
+
     if (isFirebaseConfigured && auth) {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
+      // Enforce browser local persistence for resilient session across tabs and refreshes
+      setPersistence(auth, browserLocalPersistence).catch((err) => {
+        console.warn('Firebase setPersistence warning:', err.message);
+      });
+
+      unsubscribe = onAuthStateChanged(auth, (user) => {
         if (user) {
-          setCurrentUser({
+          const userData = {
             uid: user.uid,
             email: user.email,
             displayName: user.displayName || user.email.split('@')[0],
             photoURL: user.photoURL
-          });
+          };
+          setCurrentUser(userData);
+          try {
+            localStorage.setItem(DEMO_AUTH_KEY, JSON.stringify(userData));
+          } catch (e) {}
         } else {
+          // If Firebase reports no user, check if we have an active demo mode session
+          const stored = localStorage.getItem(DEMO_AUTH_KEY);
+          if (stored) {
+            try {
+              const parsed = JSON.parse(stored);
+              if (parsed && (parsed.uid?.startsWith('user-') || parsed.uid?.startsWith('google-user-'))) {
+                // Retain demo user
+                setCurrentUser(parsed);
+                setLoading(false);
+                return;
+              }
+            } catch (e) {}
+          }
           setCurrentUser(null);
+          localStorage.removeItem(DEMO_AUTH_KEY);
         }
         setLoading(false);
       });
-      return unsubscribe;
     } else {
       // Demo / Local storage mode fallback
       try {
@@ -45,6 +80,10 @@ export const AuthProvider = ({ children }) => {
       }
       setLoading(false);
     }
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   const signup = async (email, password, displayName = '') => {
@@ -53,8 +92,12 @@ export const AuthProvider = ({ children }) => {
       const user = {
         uid: res.user.uid,
         email: res.user.email,
-        displayName: displayName || email.split('@')[0]
+        displayName: displayName || email.split('@')[0],
+        photoURL: res.user.photoURL || ''
       };
+      try {
+        localStorage.setItem(DEMO_AUTH_KEY, JSON.stringify(user));
+      } catch (e) {}
       setCurrentUser(user);
       return user;
     }
@@ -76,8 +119,12 @@ export const AuthProvider = ({ children }) => {
       const user = {
         uid: res.user.uid,
         email: res.user.email,
-        displayName: res.user.displayName || email.split('@')[0]
+        displayName: res.user.displayName || email.split('@')[0],
+        photoURL: res.user.photoURL || ''
       };
+      try {
+        localStorage.setItem(DEMO_AUTH_KEY, JSON.stringify(user));
+      } catch (e) {}
       setCurrentUser(user);
       return user;
     }
@@ -99,9 +146,12 @@ export const AuthProvider = ({ children }) => {
       const user = {
         uid: res.user.uid,
         email: res.user.email,
-        displayName: res.user.displayName,
-        photoURL: res.user.photoURL
+        displayName: res.user.displayName || res.user.email.split('@')[0],
+        photoURL: res.user.photoURL || ''
       };
+      try {
+        localStorage.setItem(DEMO_AUTH_KEY, JSON.stringify(user));
+      } catch (e) {}
       setCurrentUser(user);
       return user;
     }
@@ -120,7 +170,11 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     if (isFirebaseConfigured && auth) {
-      await signOut(auth);
+      try {
+        await signOut(auth);
+      } catch (e) {
+        console.warn('Firebase sign out error:', e);
+      }
     }
     localStorage.removeItem(DEMO_AUTH_KEY);
     setCurrentUser(null);

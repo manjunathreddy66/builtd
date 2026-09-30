@@ -3,6 +3,8 @@ import { useAuth } from './AuthContext';
 import { 
   savePortfolio, 
   getAllStoredPortfolios, 
+  saveToLocalPortfolios,
+  readFromCloud,
   normalizeUsername 
 } from '../services/portfolioService';
 import confetti from 'canvas-confetti';
@@ -49,61 +51,182 @@ const DEFAULT_PORTFOLIO_STATE = {
     layout: 'editorial',   // editorial, centered, left
     avatarShape: 'circle', // circle, square, none
     textInversion: false,  // high-contrast inverted title
-    bgPattern: 'dots'      // dots, grid, clean, soft
+    bgPattern: 'dots',     // dots, grid, clean, soft
+    colorMode: 'preset',
+    customUiEnabled: false,
+    customBgColor: '#F8F9FA',
+    customTextColor: '#111827',
+    customHighlightColor: '#F25C22'
   }
+};
+
+const mergePortfolioData = (existing, incoming) => {
+  if (!incoming) return existing || DEFAULT_PORTFOLIO_STATE;
+  return {
+    ...DEFAULT_PORTFOLIO_STATE,
+    ...existing,
+    ...incoming,
+    profile: {
+      ...DEFAULT_PORTFOLIO_STATE.profile,
+      ...(existing?.profile || {}),
+      ...(incoming.profile || {})
+    },
+    settings: {
+      ...DEFAULT_PORTFOLIO_STATE.settings,
+      ...(existing?.settings || {}),
+      ...(incoming.settings || {})
+    },
+    links: {
+      ...DEFAULT_PORTFOLIO_STATE.links,
+      ...(existing?.links || {}),
+      ...(incoming.links || {})
+    },
+    education: Array.isArray(incoming.education) && incoming.education.length > 0 
+      ? incoming.education 
+      : (existing?.education || []),
+    skills: Array.isArray(incoming.skills) && incoming.skills.length > 0 
+      ? incoming.skills 
+      : (existing?.skills || []),
+    projects: Array.isArray(incoming.projects) && incoming.projects.length > 0 
+      ? incoming.projects 
+      : (existing?.projects || []),
+    experience: Array.isArray(incoming.experience) && incoming.experience.length > 0 
+      ? incoming.experience 
+      : (existing?.experience || []),
+    achievements: Array.isArray(incoming.achievements) && incoming.achievements.length > 0 
+      ? incoming.achievements 
+      : (existing?.achievements || [])
+  };
 };
 
 export const PortfolioProvider = ({ children }) => {
   const { currentUser } = useAuth();
-  const [portfolio, setPortfolio] = useState(DEFAULT_PORTFOLIO_STATE);
+  
+  // Lazily load portfolio immediately from local cache on mount (0ms delay)
+  const [portfolio, setPortfolio] = useState(() => {
+    try {
+      const storedAuth = localStorage.getItem('builtd_auth_user');
+      const all = getAllStoredPortfolios();
+      if (storedAuth) {
+        const u = JSON.parse(storedAuth);
+        const found = Object.values(all).find(p => 
+          p.uid === u.uid || 
+          (p.profile?.email && p.profile.email.toLowerCase() === u.email?.toLowerCase())
+        );
+        if (found) {
+          return mergePortfolioData(DEFAULT_PORTFOLIO_STATE, found);
+        }
+      }
+      const list = Object.values(all);
+      if (list.length === 1) {
+        return mergePortfolioData(DEFAULT_PORTFOLIO_STATE, list[0]);
+      }
+    } catch (e) {
+      console.warn('Initial portfolio load note:', e);
+    }
+    return DEFAULT_PORTFOLIO_STATE;
+  });
+
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState(null);
 
-  // Load portfolio for currentUser
+  // Load and synchronize portfolio for currentUser (local first, then cloud)
   useEffect(() => {
     if (!currentUser) return;
 
-    const all = getAllStoredPortfolios();
-    // Look for matching portfolio by uid or by username
-    const found = Object.values(all).find(p => p.uid === currentUser.uid);
+    let isMounted = true;
 
-    if (found) {
-      setPortfolio(found);
-    } else {
-      // Initialize with user name if available
-      setPortfolio(prev => ({
-        ...prev,
-        uid: currentUser.uid,
-        profile: {
-          ...prev.profile,
-          name: currentUser.displayName || '',
-          email: currentUser.email || ''
+    const loadPortfolioData = async () => {
+      // 1. Instant check in local storage
+      const all = getAllStoredPortfolios();
+      let found = Object.values(all).find(p => 
+        p.uid === currentUser.uid || 
+        (p.profile?.email && p.profile.email.toLowerCase() === currentUser.email?.toLowerCase())
+      );
+
+      if (found && isMounted) {
+        setPortfolio(prev => mergePortfolioData(prev, found));
+      }
+
+      // 2. Cross-device sync check via Cloud RTDB
+      try {
+        let cloudData = await readFromCloud(`users/${currentUser.uid}`);
+        if (!cloudData && currentUser.email) {
+          const cleanUser = normalizeUsername(currentUser.displayName || currentUser.email.split('@')[0]);
+          cloudData = await readFromCloud(`portfolios/${cleanUser}`);
         }
-      }));
-    }
+
+        if (cloudData && cloudData.username && isMounted) {
+          saveToLocalPortfolios(cloudData.username, cloudData);
+          setPortfolio(prev => mergePortfolioData(prev, cloudData));
+          return;
+        }
+      } catch (e) {
+        console.warn('Portfolio cloud sync note:', e.message);
+      }
+
+      // 3. Fallback for brand-new users
+      if (!found && isMounted) {
+        setPortfolio(prev => ({
+          ...DEFAULT_PORTFOLIO_STATE,
+          ...prev,
+          uid: currentUser.uid,
+          profile: {
+            ...DEFAULT_PORTFOLIO_STATE.profile,
+            ...prev.profile,
+            name: prev.profile?.name || currentUser.displayName || '',
+            email: prev.profile?.email || currentUser.email || ''
+          }
+        }));
+      }
+    };
+
+    loadPortfolioData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [currentUser]);
 
-  // Update specific portfolio sections
+  // Update specific portfolio sections and automatically update local cache
   const updateProfile = (profileData) => {
-    setPortfolio(prev => ({
-      ...prev,
-      profile: { ...prev.profile, ...profileData }
-    }));
+    setPortfolio(prev => {
+      const updated = {
+        ...prev,
+        profile: { ...prev.profile, ...profileData }
+      };
+      if (updated.username) {
+        saveToLocalPortfolios(updated.username, updated);
+      }
+      return updated;
+    });
   };
 
   const updateUsername = (username) => {
     const norm = normalizeUsername(username);
-    setPortfolio(prev => ({
-      ...prev,
-      username: norm
-    }));
+    setPortfolio(prev => {
+      const updated = {
+        ...prev,
+        username: norm
+      };
+      if (norm) {
+        saveToLocalPortfolios(norm, updated);
+      }
+      return updated;
+    });
   };
 
   const updateSettings = (newSettings) => {
-    setPortfolio(prev => ({
-      ...prev,
-      settings: { ...prev.settings, ...newSettings }
-    }));
+    setPortfolio(prev => {
+      const updated = {
+        ...prev,
+        settings: { ...prev.settings, ...newSettings }
+      };
+      if (updated.username) {
+        saveToLocalPortfolios(updated.username, updated);
+      }
+      return updated;
+    });
   };
 
   const addProject = (project) => {
@@ -213,13 +336,14 @@ export const PortfolioProvider = ({ children }) => {
     setIsSaving(true);
     try {
       const toSave = customData || portfolio;
-      const finalData = {
+      const finalData = mergePortfolioData(portfolio, {
         ...toSave,
-        uid: toSave.uid || currentUser?.uid || 'guest-user',
+        uid: toSave.uid || portfolio.uid || currentUser?.uid || 'guest-user',
+        username: toSave.username || portfolio.username || '',
         updatedAt: new Date().toISOString()
-      };
+      });
       if (!finalData.createdAt) {
-        finalData.createdAt = new Date().toISOString();
+        finalData.createdAt = portfolio.createdAt || new Date().toISOString();
       }
       
       const saveRes = await savePortfolio(finalData);

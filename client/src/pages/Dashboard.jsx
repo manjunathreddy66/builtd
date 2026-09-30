@@ -55,7 +55,7 @@ export const Dashboard = () => {
       list.push({ text: 'Connect your GitHub profile', link: '/editor?tab=links' });
     }
     if (!portfolio.resumeUrl) {
-      list.push({ text: 'Attach your PDF resume link', link: '/editor?tab=resume' });
+      list.push({ text: 'Attach your PDF resume link', link: '/editor?tab=links' });
     }
     if (!portfolio.experience || portfolio.experience.length === 0) {
       list.push({ text: 'Add an internship or club experience', link: '/editor?tab=experience' });

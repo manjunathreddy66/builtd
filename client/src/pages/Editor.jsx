@@ -81,41 +81,76 @@ export const Editor = () => {
 
   // Education
   const [educationList, setEducationList] = useState(portfolio.education || []);
+  const [newEducation, setNewEducation] = useState({ degree: 'B.Tech', branch: '', college: '', university: '', startYear: '2023', endYear: '2027', cgpa: '' });
 
   // Experience
   const [experienceList, setExperienceList] = useState(portfolio.experience || []);
+  const [newExperience, setNewExperience] = useState({ type: 'Internship', role: '', organization: '', startDate: '', endDate: 'Present', description: '' });
 
   // Achievements
   const [achievementsList, setAchievementsList] = useState(portfolio.achievements || []);
+  const [newAchievement, setNewAchievement] = useState({ title: '', organization: '', year: new Date().getFullYear().toString(), description: '' });
 
   // Links
   const [links, setLinks] = useState(portfolio.links || {});
   const [resumeUrl, setResumeUrl] = useState(portfolio.resumeUrl || '');
+
+  // Synchronize form states whenever portfolio is loaded or updated (eliminates blank previous data bug)
+  useEffect(() => {
+    if (portfolio) {
+      if (portfolio.profile) {
+        setName(portfolio.profile.name || '');
+        setHeadline(portfolio.profile.headline || '');
+        setBio(portfolio.profile.bio || '');
+        setLocation(portfolio.profile.location || '');
+        setProfileImage(portfolio.profile.profileImage || '');
+      }
+      if (Array.isArray(portfolio.skills)) setSelectedSkills(portfolio.skills);
+      if (Array.isArray(portfolio.projects)) setProjectsList(portfolio.projects);
+      if (Array.isArray(portfolio.education)) setEducationList(portfolio.education);
+      if (Array.isArray(portfolio.experience)) setExperienceList(portfolio.experience);
+      if (Array.isArray(portfolio.achievements)) setAchievementsList(portfolio.achievements);
+      if (portfolio.links) setLinks(portfolio.links);
+      if (portfolio.resumeUrl !== undefined) setResumeUrl(portfolio.resumeUrl || '');
+    }
+  }, [
+    portfolio?.uid, 
+    portfolio?.username, 
+    portfolio?.updatedAt,
+    portfolio?.profile?.name,
+    portfolio?.profile?.headline,
+    portfolio?.profile?.bio,
+    portfolio?.profile?.location,
+    portfolio?.profile?.profileImage
+  ]);
 
   useEffect(() => {
     const tabParam = searchParams.get('tab');
     if (tabParam) setActiveTab(tabParam);
   }, [searchParams]);
 
-  // Synchronize on save
+  // Synchronize on save without wiping out previous data
   const handleSaveAll = async () => {
     const updated = {
       ...portfolio,
       profile: {
         ...portfolio.profile,
-        name,
-        headline,
-        bio,
-        location,
-        profileImage
+        name: name.trim() || portfolio.profile?.name || '',
+        headline: headline.trim() || portfolio.profile?.headline || '',
+        bio: bio !== undefined ? bio : (portfolio.profile?.bio || ''),
+        location: location.trim() || portfolio.profile?.location || '',
+        profileImage: profileImage || portfolio.profile?.profileImage || ''
       },
       skills: selectedSkills,
       projects: projectsList,
       education: educationList,
       experience: experienceList,
       achievements: achievementsList,
-      links,
-      resumeUrl
+      links: {
+        ...(portfolio.links || {}),
+        ...links
+      },
+      resumeUrl: resumeUrl !== undefined ? resumeUrl : (portfolio.resumeUrl || '')
     };
 
     try {
@@ -393,7 +428,7 @@ export const Editor = () => {
                       <div>
                         <div style={{ fontWeight: 700 }}>{p.name}</div>
                         <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
-                          {p.technologies?.join(', ')}
+                          {Array.isArray(p.technologies) ? p.technologies.join(', ') : (p.technologies || '')}
                         </div>
                       </div>
                       <button
@@ -465,9 +500,32 @@ export const Editor = () => {
                     <input
                       type="text"
                       className="form-input"
+                      placeholder="React, Node.js, PostgreSQL"
                       value={newProject.technologies}
                       onChange={(e) => setNewProject({ ...newProject, technologies: e.target.value })}
                     />
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div className="form-group">
+                      <label className="form-label">GitHub URL (Optional)</label>
+                      <input
+                        type="url"
+                        className="form-input"
+                        placeholder="https://github.com/..."
+                        value={newProject.githubUrl}
+                        onChange={(e) => setNewProject({ ...newProject, githubUrl: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Live Demo URL (Optional)</label>
+                      <input
+                        type="url"
+                        className="form-input"
+                        placeholder="https://myproject.app"
+                        value={newProject.liveUrl}
+                        onChange={(e) => setNewProject({ ...newProject, liveUrl: e.target.value })}
+                      />
+                    </div>
                   </div>
                   <button
                     onClick={() => {
@@ -531,6 +589,400 @@ export const Editor = () => {
                     className="btn btn-secondary"
                   >
                     Add
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* TAB: EDUCATION */}
+            {activeTab === 'education' && (
+              <div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '16px' }}>Education & Academics</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '24px' }}>
+                  {educationList.map((edu, idx) => (
+                    <div key={edu.id || idx} style={{
+                      padding: '16px',
+                      backgroundColor: 'var(--bg-main)',
+                      border: '1px solid var(--border-default)',
+                      borderRadius: 'var(--radius-sm)',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      gap: '12px'
+                    }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 700, fontSize: '0.9375rem' }}>
+                          {edu.degree} {edu.branch ? `— ${edu.branch}` : ''}
+                        </div>
+                        <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                          {edu.college} {edu.university ? `(${edu.university})` : ''}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                          {edu.startYear} — {edu.endYear || 'Present'} {edu.cgpa ? `• CGPA: ${edu.cgpa}` : ''}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = educationList.filter((_, i) => i !== idx);
+                          setEducationList(updated);
+                          setPortfolio(prev => ({ ...prev, education: updated }));
+                        }}
+                        style={{ color: '#DC2626', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
+                        title="Delete education"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
+                  {educationList.length === 0 && (
+                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', padding: '12px 0' }}>
+                      No education added yet. Add your current college or degree below.
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ padding: '18px', border: '1px dashed var(--border-default)', borderRadius: 'var(--radius-sm)' }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.9375rem', marginBottom: '14px' }}>+ Add Education</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div className="form-group">
+                      <label className="form-label">Degree</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="B.Tech / B.E. / B.Sc"
+                        value={newEducation.degree}
+                        onChange={(e) => setNewEducation({ ...newEducation, degree: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Branch / Major</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="Computer Science"
+                        value={newEducation.branch}
+                        onChange={(e) => setNewEducation({ ...newEducation, branch: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">College / Institute</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="University or College Name"
+                      value={newEducation.college}
+                      onChange={(e) => setNewEducation({ ...newEducation, college: e.target.value })}
+                    />
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                    <div className="form-group">
+                      <label className="form-label">Start Year</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="2023"
+                        value={newEducation.startYear}
+                        onChange={(e) => setNewEducation({ ...newEducation, startYear: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">End Year</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="2027 / Present"
+                        value={newEducation.endYear}
+                        onChange={(e) => setNewEducation({ ...newEducation, endYear: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">CGPA / % (Optional)</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="8.5 / 10"
+                        value={newEducation.cgpa}
+                        onChange={(e) => setNewEducation({ ...newEducation, cgpa: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!newEducation.college && !newEducation.degree) return;
+                      const added = [...educationList, { ...newEducation, id: 'edu-' + Date.now() }];
+                      setEducationList(added);
+                      setPortfolio(prev => ({ ...prev, education: added }));
+                      setNewEducation({ degree: 'B.Tech', branch: '', college: '', university: '', startYear: '2023', endYear: '2027', cgpa: '' });
+                    }}
+                    className="btn btn-secondary"
+                    style={{ width: '100%', marginTop: '6px' }}
+                  >
+                    <Plus size={15} /> Add to Education
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* TAB: EXPERIENCE */}
+            {activeTab === 'experience' && (
+              <div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '16px' }}>Experience & Leadership</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '24px' }}>
+                  {experienceList.map((exp, idx) => (
+                    <div key={exp.id || idx} style={{
+                      padding: '16px',
+                      backgroundColor: 'var(--bg-main)',
+                      border: '1px solid var(--border-default)',
+                      borderRadius: 'var(--radius-sm)',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      gap: '12px'
+                    }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                          <span style={{ fontWeight: 700, fontSize: '0.9375rem' }}>{exp.role}</span>
+                          {exp.type && <span className="chip" style={{ fontSize: '0.6875rem', padding: '2px 8px' }}>{exp.type}</span>}
+                        </div>
+                        <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                          {exp.organization} • {exp.startDate || '2024'} — {exp.endDate || 'Present'}
+                        </div>
+                        {exp.description && (
+                          <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginTop: '6px', lineHeight: 1.5 }}>
+                            {exp.description}
+                          </div>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = experienceList.filter((_, i) => i !== idx);
+                          setExperienceList(updated);
+                          setPortfolio(prev => ({ ...prev, experience: updated }));
+                        }}
+                        style={{ color: '#DC2626', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
+                        title="Delete experience"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
+                  {experienceList.length === 0 && (
+                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', padding: '12px 0' }}>
+                      No experience listed. Add internships, clubs, freelancing, or roles below.
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ padding: '18px', border: '1px dashed var(--border-default)', borderRadius: 'var(--radius-sm)' }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.9375rem', marginBottom: '14px' }}>+ Add Experience</div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Type</label>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                      {['Internship', 'College Club', 'Freelancing', 'Volunteer', 'Part-time', 'Full-time'].map((t) => (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => setNewExperience({ ...newExperience, type: t })}
+                          className={`chip ${newExperience.type === t ? 'active' : ''}`}
+                        >
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div className="form-group">
+                      <label className="form-label">Role / Title</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="Frontend Intern / Club Lead"
+                        value={newExperience.role}
+                        onChange={(e) => setNewExperience({ ...newExperience, role: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Company / Organization</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="Acme Tech / IEEE Student Branch"
+                        value={newExperience.organization}
+                        onChange={(e) => setNewExperience({ ...newExperience, organization: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div className="form-group">
+                      <label className="form-label">Start Date</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="May 2024"
+                        value={newExperience.startDate}
+                        onChange={(e) => setNewExperience({ ...newExperience, startDate: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">End Date</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="Aug 2024 / Present"
+                        value={newExperience.endDate}
+                        onChange={(e) => setNewExperience({ ...newExperience, endDate: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Description</label>
+                    <textarea
+                      className="form-input form-textarea"
+                      placeholder="Briefly describe what you built, learned, or led."
+                      value={newExperience.description}
+                      onChange={(e) => setNewExperience({ ...newExperience, description: e.target.value })}
+                      style={{ minHeight: '65px' }}
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!newExperience.role && !newExperience.organization) return;
+                      const added = [...experienceList, { ...newExperience, id: 'exp-' + Date.now() }];
+                      setExperienceList(added);
+                      setPortfolio(prev => ({ ...prev, experience: added }));
+                      setNewExperience({ type: 'Internship', role: '', organization: '', startDate: '', endDate: 'Present', description: '' });
+                    }}
+                    className="btn btn-secondary"
+                    style={{ width: '100%', marginTop: '6px' }}
+                  >
+                    <Plus size={15} /> Add to Experience
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* TAB: ACHIEVEMENTS */}
+            {activeTab === 'achievements' && (
+              <div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '16px' }}>Awards & Achievements</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '24px' }}>
+                  {achievementsList.map((ach, idx) => (
+                    <div key={ach.id || idx} style={{
+                      padding: '16px',
+                      backgroundColor: 'var(--bg-main)',
+                      border: '1px solid var(--border-default)',
+                      borderRadius: 'var(--radius-sm)',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      gap: '12px'
+                    }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 700, fontSize: '0.9375rem' }}>{ach.title}</div>
+                        <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                          {ach.organization} {ach.year ? `• ${ach.year}` : ''}
+                        </div>
+                        {ach.description && (
+                          <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginTop: '6px', lineHeight: 1.5 }}>
+                            {ach.description}
+                          </div>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = achievementsList.filter((_, i) => i !== idx);
+                          setAchievementsList(updated);
+                          setPortfolio(prev => ({ ...prev, achievements: updated }));
+                        }}
+                        style={{ color: '#DC2626', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
+                        title="Delete achievement"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
+                  {achievementsList.length === 0 && (
+                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', padding: '12px 0' }}>
+                      No achievements added. Showcase hackathons, certifications, or awards below.
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ padding: '18px', border: '1px dashed var(--border-default)', borderRadius: 'var(--radius-sm)' }}>
+                  <div style={{ fontWeight: 700, fontSize: '0.9375rem', marginBottom: '14px' }}>+ Add Award or Achievement</div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Title</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="Winner — Smart India Hackathon / AWS Certified"
+                      value={newAchievement.title}
+                      onChange={(e) => setNewAchievement({ ...newAchievement, title: e.target.value })}
+                    />
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px' }}>
+                    <div className="form-group">
+                      <label className="form-label">Issuing Organization</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="Google / AICTE / HackerRank"
+                        value={newAchievement.organization}
+                        onChange={(e) => setNewAchievement({ ...newAchievement, organization: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Year</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="2025"
+                        value={newAchievement.year}
+                        onChange={(e) => setNewAchievement({ ...newAchievement, year: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Description (Optional)</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="Brief details or impact of this recognition"
+                      value={newAchievement.description}
+                      onChange={(e) => setNewAchievement({ ...newAchievement, description: e.target.value })}
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!newAchievement.title) return;
+                      const added = [...achievementsList, { ...newAchievement, id: 'ach-' + Date.now() }];
+                      setAchievementsList(added);
+                      setPortfolio(prev => ({ ...prev, achievements: added }));
+                      setNewAchievement({ title: '', organization: '', year: new Date().getFullYear().toString(), description: '' });
+                    }}
+                    className="btn btn-secondary"
+                    style={{ width: '100%', marginTop: '6px' }}
+                  >
+                    <Plus size={15} /> Add to Achievements
                   </button>
                 </div>
               </div>
